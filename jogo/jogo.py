@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 
-size = 600, 600
 FUNDO = 0, 0, 0
 TRACO = 255, 255, 255
 VENCE = 255, 0, 0
@@ -46,7 +45,7 @@ def desenhar_jogo(tela, jogo, vencedor):
 
 
 pygame.init()
-tela = pygame.display.set_mode(size)
+tela = pygame.display.set_mode(600, 600)
 jogo = [0, 0, 0, 0, 0, 0, 0, 0,  0]
 vencedor = 0
 
