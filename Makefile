@@ -28,6 +28,8 @@ FLAGS := $(DFLAGS)
 # Outras Flags
 RMFLAGS  := -f -v
 
+.PHONY: all run jogar compile mapa clean
+
 ### Ações
 all:
 	mkdir -p $(F_BIN)
@@ -36,6 +38,9 @@ all:
 run: $(EXEC)
 	./$(EXEC)
 
+
+jogar:
+	cd jogo && ../venv/bin/python jogo.py
 
 ### Compilação
 compile: clean $(EXEC)

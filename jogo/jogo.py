@@ -10,6 +10,66 @@ TRACO = Color(255, 255, 255)
 VENCE = Color(255, 0, 0)
 
 
+simetrias = (
+    (0, 1, 2, 3, 4, 5, 6, 7, 8),
+    (2, 1, 0, 5, 4, 3, 8, 7, 6),
+    (2, 5, 8, 1, 4, 7, 0, 3, 6),
+    (8, 5, 2, 7, 4, 1, 6, 3, 0),
+    (8, 7, 6, 5, 4, 3, 2, 1, 0),
+    (6, 7, 8, 3, 4, 5, 0, 1, 2),
+    (6, 3, 0, 7, 4, 1, 8, 5, 2),
+    (0, 3, 6, 1, 4, 7, 2, 5, 8)
+)
+
+simetrias_reversa = (
+    (0, 1, 2, 3, 4, 5, 6, 7, 8),
+    (2, 1, 0, 5, 4, 3, 8, 7, 6),
+    (6, 3, 0, 7, 4, 1, 8, 5, 2),
+    (8, 5, 2, 7, 4, 1, 6, 3, 0),
+    (8, 7, 6, 5, 4, 3, 2, 1, 0),
+    (6, 7, 8, 3, 4, 5, 0, 1, 2),
+    (2, 5, 8, 1, 4, 7, 0, 3, 6),
+    (0, 3, 6, 1, 4, 7, 2, 5, 8)
+)
+
+
+class Solucao:
+    def __init__(self, path):
+        with open('../mapa.txt', 'r') as file:
+            a, b = file.readline().split(' ')
+            a, b = int(a), int(b)
+            self.mapa = [int(i) for i in file.readlines()]
+
+        with open(path, 'r') as file:
+            self.sol = [int(i) for i in file.readlines()]
+
+    def calc_simetria(self, jogo):
+        minimo = 0x3f3f3f3f
+        sim = -1
+        for i in range(8):
+            numero = 0
+            for j in range(9):
+                numero += jogo[simetrias[i][j]] * (3 ** j)
+
+            if numero < minimo:
+                minimo = numero
+                sim = i
+        return sim
+
+    def calc_min(self, jogo, sim):
+        numero = 0
+        for j in range(9):
+            numero += jogo[simetrias[sim][j]] * (3 ** j)
+        return numero
+
+    def get(self, jogo):
+        sim = self.calc_simetria(jogo)
+        minimo = self.calc_min(jogo, sim)
+        gene = self.mapa[minimo]
+        jogada = self.sol[gene]
+        return simetrias[sim][jogada]
+
+
 vitorias = (
     (0, 1, 2),
     (3, 4, 5),
@@ -92,17 +152,21 @@ class Jogo:
     def troca_vez(self):
         self.jogador = 2 if self.jogador == 1 else 1
 
-    def on_click(self, pos):
+    def fazer_jogada(self, i):
         if(self.vencedor != 0):
             return
+        if self.jogo[i] != 0:
+            print(f'Jogando em {i}')
+        self.jogo[i] = self.jogador
+        self.troca_vez()
+        jogo.procura_vitoria()
 
+    def on_click(self, pos):
         x, y = pos
         x, y = x // 200, y // 200
         i = y*3 + x
         if self.jogo[i] == 0:
-            self.jogo[i] = self.jogador
-            self.troca_vez()
-            jogo.procura_vitoria()
+            self.fazer_jogada(i)
 
 
 if __name__ == "__main__":
@@ -111,6 +175,7 @@ if __name__ == "__main__":
     jogo = Jogo()
     jogo.desenha(tela)
     clock = Clock()
+    solucao = Solucao('../minmax.txt')
 
     while True:
         clock.tick(30)
@@ -120,5 +185,6 @@ if __name__ == "__main__":
                 quit(0)
             elif event.type == MOUSEBUTTONDOWN:
                 jogo.on_click(event.pos)
+                jogo.fazer_jogada(solucao.get(jogo.jogo))
 
         jogo.desenha(tela)
