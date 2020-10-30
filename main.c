@@ -105,6 +105,7 @@ int main() {
     for (i = 0; i < tam_cromossomo; i++) {
         printf("%d\n", individuo->genes[i]);
     }
+    individuo_salvar(individuo, "minmax.txt");
 
     individuo_apagar(&individuo);
     for (i = 0; i < M; i++) free(jogos[i]);

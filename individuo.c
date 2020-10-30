@@ -82,3 +82,12 @@ void individuo_set(Individuo* individuo, int* jogo, int jogada) {
     jogada = simetrias[simetria][jogada];
     individuo->genes[gene] = jogada;
 }
+
+void individuo_salvar(Individuo* individuo, char* path) {
+    FILE* file = fopen(path, "w");
+    int i;
+    for (i = 0; i < tam_cromossomo; i++) {
+        fprintf(file, "%d\n", individuo->genes[i]);
+    }
+    fclose(file);
+}

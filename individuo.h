@@ -18,4 +18,6 @@ void individuo_apagar(Individuo** individuo);
 int individuo_get(Individuo* individuo, int* jogo);
 void individuo_set(Individuo* individuo, int* jogo, int jogada);
 
+void individuo_salvar(Individuo* individuo, char* path);
+
 #endif
