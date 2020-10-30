@@ -4,7 +4,6 @@
 
 // Obs: Se X for 1 e O 2 entao eu vou ter mais 1 que 2 no numero ternario, o que vai criar um mapa menor
 
-const int INF = 0x3f3f3f3f;
 const int N = 19683;   // powi(3, 9); numero de arranjos possiveis de X e O
 const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1 ; Numemro maximo de recursoes de jogo_possiveis()
 
@@ -129,8 +128,10 @@ static inline int** jogos_possiveis(int* n) {
     return jogos;
 
 falha:
-    for (i = 0; i < M; i++) free(jogos[i]);
-    free(jogos);
+    if (jogos) {
+        for (i = 0; i < M; i++) free(jogos[i]);
+        free(jogos);
+    }
     return NULL;
 }
 
@@ -187,8 +188,10 @@ int main() {
     return EXIT_SUCCESS;
 
 falha:
-    for (i = 0; i < M; i++) free(jogos[i]);
-    free(jogos);
+    if (jogos) {
+        for (i = 0; i < M; i++) free(jogos[i]);
+        free(jogos);
+    }
     printf("Mapeamento falhou\n");
     return EXIT_FAILURE;
 }
