@@ -36,7 +36,7 @@ static int calc_simetria(int* jogo) {
 
     for (i = 0; i < 8; i++) {
         numero = 0;
-        for (j = 0; j < 9; j++) numero += jogo[simetrias[i][j]] * powi(3, j);
+        for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[i][j]] * powi(3, j);
         if (numero < minimo) {
             minimo = numero;
             sim = i;
@@ -47,7 +47,7 @@ static int calc_simetria(int* jogo) {
 
 static int calc_min(int* jogo, int i) {
     int j, numero = 0;
-    for (j = 0; j < 9; j++) numero += jogo[simetrias[i][j]] * powi(3, j);
+    for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[i][j]] * powi(3, j);
     return numero;
 }
 

@@ -49,7 +49,7 @@ class Solucao:
         for i in range(8):
             numero = 0
             for j in range(9):
-                numero += jogo[simetrias[i][j]] * (3 ** j)
+                numero += jogo[simetrias_reversa[i][j]] * (3 ** j)
 
             if numero < minimo:
                 minimo = numero
@@ -59,7 +59,7 @@ class Solucao:
     def calc_min(self, jogo, sim):
         numero = 0
         for j in range(9):
-            numero += jogo[simetrias[sim][j]] * (3 ** j)
+            numero += jogo[simetrias_reversa[sim][j]] * (3 ** j)
         return numero
 
     def get(self, jogo):
@@ -67,7 +67,7 @@ class Solucao:
         minimo = self.calc_min(jogo, sim)
         gene = self.mapa[minimo]
         jogada = self.sol[gene]
-        return simetrias[sim][jogada]
+        return simetrias_reversa[sim][jogada]
 
 
 vitorias = (
