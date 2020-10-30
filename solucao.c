@@ -9,13 +9,12 @@ static int simetrias[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
                               {6, 3, 0, 7, 4, 1, 8, 5, 2},
                               {0, 3, 6, 1, 4, 7, 2, 5, 8}};
 
-// TODO revisar simetria reversa
 static int simetrias_reversa[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
                                       {2, 1, 0, 5, 4, 3, 8, 7, 6},
                                       {6, 3, 0, 7, 4, 1, 8, 5, 2},
                                       {8, 5, 2, 7, 4, 1, 6, 3, 0},
                                       {8, 7, 6, 5, 4, 3, 2, 1, 0},
-                                      {6, 7, 8, 3, 4, 0, 0, 1, 2},
+                                      {6, 7, 8, 3, 4, 5, 0, 1, 2},
                                       {2, 5, 8, 1, 4, 7, 0, 3, 6},
                                       {0, 3, 6, 1, 4, 7, 2, 5, 8}};
 
@@ -31,7 +30,7 @@ static int powi(int x, int n) {
 
 static int calc_simetria(int* jogo) {
     int i, j;
-    int minimo = 0x3f3f3f3f;  // Nao tem como dar um numero maior que N
+    int minimo = 0x3f3f3f3f;
     int sim = -1;
     int numero;
 
@@ -67,19 +66,19 @@ void solucao_apagar(Solucao** solucao) {
 }
 
 int solucao_get(Solucao* solucao, int* jogo) {
-    int simetria = calc_simetria(jogo);
-    int minimo = calc_min(jogo, simetria);
+    int sim = calc_simetria(jogo);
+    int minimo = calc_min(jogo, sim);
     int gene = mapa[minimo];
     int jogada = solucao->sol[gene];
-    return simetrias_reversa[simetria][jogada];
+    return simetrias[sim][jogada];
 }
 
 void solucao_set(Solucao* solucao, int* jogo, int jogada) {
-    int simetria = calc_simetria(jogo);
-    int minimo = calc_min(jogo, simetria);
+    int sim = calc_simetria(jogo);
+    int minimo = calc_min(jogo, sim);
     int gene = mapa[minimo];
 
-    jogada = simetrias[simetria][jogada];
+    jogada = simetrias_reversa[sim][jogada];
     solucao->sol[gene] = jogada;
 }
 

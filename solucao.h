@@ -6,7 +6,7 @@
 
 typedef struct Solucao Solucao;
 struct Solucao {
-    int* solucao;
+    int* sol;
 };
 
 extern int* mapa;

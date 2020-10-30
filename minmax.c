@@ -94,14 +94,14 @@ int melhor_jogada(int* jogo) {
     int proximo = proximo_jogador(jogo);
     int* jogo_aux = NULL;
 
-    int mm, melhor = -2, jogada = -1;
+    int mm, melhor = -2, jogada = -2;
     for (i = 0; i < 9; i++) {
         if (jogo[i] == 0) {
             jogo_aux = copiar_jogo(jogo);
             if (!jogo_aux) goto falha;
 
             jogo_aux[i] = proximo;
-            mm = minimax(jogo_aux, proximo, trocar_vez(proximo));
+            mm = minimax(jogo_aux, trocar_vez(proximo), proximo);
             if (mm > melhor) {
                 melhor = mm;
                 jogada = i;
