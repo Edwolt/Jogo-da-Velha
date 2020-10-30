@@ -2,10 +2,14 @@
 #define INDIVIDUO_H
 
 #include <stdlib.h>
+#include "mapa.h"
 
 typedef struct Individuo Individuo;
 
-Individuo* individuo_novo(int n);
+extern int* mapa;
+extern int tam_cromossomo;
+
+Individuo* individuo_novo();
 void individuo_apagar(Individuo** individuo);
 
 int individuo_get(Individuo* individuo, int* jogo);
