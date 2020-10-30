@@ -87,7 +87,7 @@ class Jogo:
         # Vazio: 0
         # X: 1
         # O: 2
-        self.jogo = [0, 0, 0, 0, 0, 0, 0, 0,  0]
+        self.jogo = [0] * 9
 
         self.jogador = 1
         self.vencedor = 0
@@ -153,20 +153,23 @@ class Jogo:
         self.jogador = 2 if self.jogador == 1 else 1
 
     def fazer_jogada(self, i):
-        if(self.vencedor != 0):
-            return
+        if self.vencedor != 0 or self.velha:
+            return False
         if self.jogo[i] != 0:
-            print(f'Jogando em {i}')
+            print(f'BUG: Jogando em cima de {i}')
+            return False
+
         self.jogo[i] = self.jogador
         self.troca_vez()
         jogo.procura_vitoria()
+        return True
 
     def on_click(self, pos):
         x, y = pos
         x, y = x // 200, y // 200
         i = y*3 + x
         if self.jogo[i] == 0:
-            self.fazer_jogada(i)
+            return self.fazer_jogada(i)
 
 
 if __name__ == "__main__":
@@ -184,7 +187,9 @@ if __name__ == "__main__":
                 pygame.quit()
                 quit(0)
             elif event.type == MOUSEBUTTONDOWN:
-                jogo.on_click(event.pos)
-                jogo.fazer_jogada(solucao.get(jogo.jogo))
+                if jogo.on_click(event.pos):
+                    jogo.fazer_jogada(solucao.get(jogo.jogo))
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                jogo.__init__()
 
         jogo.desenha(tela)
