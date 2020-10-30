@@ -1,4 +1,4 @@
-#include "individuo.h"
+#include "solucao.h"
 
 static int simetrias[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
                               {2, 1, 0, 5, 4, 3, 8, 7, 6},
@@ -52,42 +52,42 @@ static int calc_min(int* jogo, int i) {
     return numero;
 }
 
-Individuo* individuo_novo() {
-    Individuo* individuo = malloc(sizeof(individuo));
-    individuo->genes = malloc(tam_cromossomo * sizeof(int));
-    return individuo;
+Solucao* solucao_novo() {
+    Solucao* solucao = malloc(sizeof(solucao));
+    solucao->sol = malloc(tam_cromossomo * sizeof(int));
+    return solucao;
 }
 
-void individuo_apagar(Individuo** individuo) {
-    if (!individuo || !*individuo) return;
+void solucao_apagar(Solucao** solucao) {
+    if (!solucao || !*solucao) return;
 
-    free((*individuo)->genes);
-    free(*individuo);
-    *individuo = NULL;
+    free((*solucao)->sol);
+    free(*solucao);
+    *solucao = NULL;
 }
 
-int individuo_get(Individuo* individuo, int* jogo) {
+int solucao_get(Solucao* solucao, int* jogo) {
     int simetria = calc_simetria(jogo);
     int minimo = calc_min(jogo, simetria);
     int gene = mapa[minimo];
-    int jogada = individuo->genes[gene];
+    int jogada = solucao->sol[gene];
     return simetrias_reversa[simetria][jogada];
 }
 
-void individuo_set(Individuo* individuo, int* jogo, int jogada) {
+void solucao_set(Solucao* solucao, int* jogo, int jogada) {
     int simetria = calc_simetria(jogo);
     int minimo = calc_min(jogo, simetria);
     int gene = mapa[minimo];
 
     jogada = simetrias[simetria][jogada];
-    individuo->genes[gene] = jogada;
+    solucao->sol[gene] = jogada;
 }
 
-void individuo_salvar(Individuo* individuo, char* path) {
+void solucao_salvar(Solucao* solucao, char* path) {
     FILE* file = fopen(path, "w");
     int i;
     for (i = 0; i < tam_cromossomo; i++) {
-        fprintf(file, "%d\n", individuo->genes[i]);
+        fprintf(file, "%d\n", solucao->sol[i]);
     }
     fclose(file);
 }

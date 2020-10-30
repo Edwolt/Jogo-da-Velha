@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include <stdio.h>
-#include "individuo.h"
 #include "mapa.h"
 #include "minimax.h"
+#include "solucao.h"
 
 const int N = 19683;   // powi(3, 9); numero de arranjos possiveis de X e O
 const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1 ; Numemro maximo de recursoes de jogo_possiveis()
@@ -87,7 +87,7 @@ int main() {
     int i;
     int n;
     int** jogos = NULL;
-    Individuo* individuo = NULL;
+    Solucao* solucao = NULL;
 
     bool ok = carregar_mapa();
     if (!ok) goto falha;
@@ -95,26 +95,26 @@ int main() {
     jogos = jogos_possiveis(&n);
     if (!jogos) goto falha;
 
-    individuo = individuo_novo();
-    if (!individuo) goto falha;
+    solucao = solucao_novo();
+    if (!solucao) goto falha;
 
     for (i = 0; i < n; i++) {
-        individuo_set(individuo, jogos[i], melhor_jogada(jogos[i]));
+        solucao_set(solucao, jogos[i], melhor_jogada(jogos[i]));
     }
 
     for (i = 0; i < tam_cromossomo; i++) {
-        printf("%d\n", individuo->genes[i]);
+        printf("%d\n", solucao->sol[i]);
     }
-    individuo_salvar(individuo, "minmax.txt");
+    solucao_salvar(solucao, "minmax.txt");
 
-    individuo_apagar(&individuo);
+    solucao_apagar(&solucao);
     for (i = 0; i < M; i++) free(jogos[i]);
     free(jogos);
     free_mapa();
 
     return EXIT_SUCCESS;
 falha:
-    individuo_apagar(&individuo);
+    solucao_apagar(&solucao);
     if (jogos) {
         for (i = 0; i < M; i++) free(jogos[i]);
         free(jogos);
