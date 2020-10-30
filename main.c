@@ -107,6 +107,8 @@ int main() {
     }
 
     individuo_apagar(&individuo);
+    for (i = 0; i < M; i++) free(jogos[i]);
+    free(jogos);
     free_mapa();
 
     return EXIT_SUCCESS;
@@ -116,5 +118,6 @@ falha:
         for (i = 0; i < M; i++) free(jogos[i]);
         free(jogos);
     }
+    free_mapa();
     return EXIT_FAILURE;
 }
