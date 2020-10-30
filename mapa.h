@@ -1,11 +1,14 @@
 #ifndef MAPA_H
 #define MAPA_H
 
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-int* mapa = NULL;
-int tam_cromossomo = 0;
+extern int* mapa;
+extern int tam_cromossomo;
 
-int carregar_mapa();
+bool carregar_mapa();
+void free_mapa();
 
 #endif

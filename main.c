@@ -84,12 +84,14 @@ falha:
 }
 
 int main() {
-    int i, j;
+    int i;
     int n;
     int** jogos = NULL;
     Individuo* individuo = NULL;
 
-    carregar_mapa();
+    bool ok = carregar_mapa();
+    if (!ok) goto falha;
+
     jogos = jogos_possiveis(&n);
     if (!jogos) goto falha;
 
@@ -103,6 +105,9 @@ int main() {
     for (i = 0; i < tam_cromossomo; i++) {
         printf("%d\n", individuo->genes[i]);
     }
+
+    individuo_apagar(&individuo);
+    free_mapa();
 
     return EXIT_SUCCESS;
 falha:
