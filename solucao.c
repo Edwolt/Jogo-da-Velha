@@ -54,6 +54,8 @@ static int calc_min(int* jogo, int i) {
 Solucao* solucao_novo() {
     Solucao* solucao = malloc(sizeof(solucao));
     solucao->sol = malloc(tam_cromossomo * sizeof(int));
+    int i;
+    for (i = 0; i < tam_cromossomo; i++) solucao->sol[i] = -1;
     return solucao;
 }
 
@@ -70,7 +72,7 @@ int solucao_get(Solucao* solucao, int* jogo) {
     int minimo = calc_min(jogo, sim);
     int gene = mapa[minimo];
     int jogada = solucao->sol[gene];
-    return simetrias[sim][jogada];
+    return simetrias_reversa[sim][jogada];
 }
 
 void solucao_set(Solucao* solucao, int* jogo, int jogada) {
@@ -78,7 +80,7 @@ void solucao_set(Solucao* solucao, int* jogo, int jogada) {
     int minimo = calc_min(jogo, sim);
     int gene = mapa[minimo];
 
-    jogada = simetrias_reversa[sim][jogada];
+    jogada = simetrias[sim][jogada];
     solucao->sol[gene] = jogada;
 }
 

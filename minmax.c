@@ -11,6 +11,12 @@ static int vitorias[8][3] = {{0, 1, 2},
 
 inline static int trocar_vez(int vez) { return (vez == 1 ? 2 : 1); }
 
+/**
+ * 0: Ainda tem jogadas a ser feitas
+ * 1: O jogador X ganhou
+ * 2: O jogador O ganhou
+ * 3: deu velha
+ */
 static int calc_vencedor(int* jogo) {
     int i;
     int a, b, c;
@@ -20,7 +26,12 @@ static int calc_vencedor(int* jogo) {
         c = vitorias[i][2];
         if (jogo[a] != 0 && jogo[a] == jogo[b] && jogo[b] == jogo[c]) return jogo[a];
     }
-    return 0;
+    bool zero = false;
+    for (i = 0; i < 9; i++) {
+        if (jogo[i] == 0) zero = true;
+    }
+
+    return (zero ? 0 : 3);
 }
 
 static int* copiar_jogo(int* jogo) {
@@ -32,48 +43,62 @@ static int* copiar_jogo(int* jogo) {
 
 int minimax(int* jogo, int vez, int maximizador) {
     int i;
+    int aux;
+    int* jogo_aux = NULL;
+    bool zero;
 
     // Se for um nó terminal
     int vencedor = calc_vencedor(jogo);
     if (vencedor == maximizador) {
         return 1;
-    } else if (vencedor == 0) {
+    } else if (vencedor == 3) {
         return 0;
-    } else {
+    } else if (vencedor != 0) {
         return -1;
     }
 
     if (vez == maximizador) {  // Se for a minha vez
-        bool flag;
+        zero = false;
         for (i = 0; i < 9; i++) {
-            flag = false;
-            int* novo_jogo = copiar_jogo(jogo);
-            novo_jogo[i] = vez;
-            int mm = minimax(novo_jogo, trocar_vez(vez), maximizador);
-            free(novo_jogo);
-            if (mm == 1) {
+            if (jogo[i] != 0) continue;
+
+            jogo_aux = copiar_jogo(jogo);
+            if (!jogo_aux) goto falha;
+            jogo_aux[i] = vez;
+
+            aux = minimax(jogo_aux, trocar_vez(vez), maximizador);
+            free(jogo_aux);
+
+            if (aux == 1) {
                 return 1;
-            } else if (mm == 0) {
-                flag = true;
+            } else if (aux == 0) {
+                zero = true;
             }
         }
-        return (flag ? 0 : -1);
+        return (zero ? 0 : -1);
     } else {  // Se for a vez do oponente
-        bool flag;
+        zero = false;
         for (i = 0; i < 9; i++) {
-            flag = false;
-            int* novo_jogo = copiar_jogo(jogo);
-            novo_jogo[i] = vez;
-            int mm = minimax(novo_jogo, trocar_vez(vez), maximizador);
-            free(novo_jogo);
-            if (mm == -1) {
+            if (jogo[i] != 0) continue;
+
+            jogo_aux = copiar_jogo(jogo);
+            if (!jogo_aux) goto falha;
+            jogo_aux[i] = vez;
+
+            aux = minimax(jogo_aux, trocar_vez(vez), maximizador);
+            free(jogo_aux);
+
+            if (aux == -1) {
                 return -1;
-            } else if (mm == 0) {
-                flag = true;
+            } else if (aux == 0) {
+                zero = true;
             }
         }
-        return (flag ? 0 : 1);
+        return (zero ? 0 : 1);
     }
+
+falha:
+    return 0;
 }
 
 static int proximo_jogador(int* jogo) {
@@ -91,24 +116,25 @@ static int proximo_jogador(int* jogo) {
 
 int melhor_jogada(int* jogo) {
     int i;
-    int proximo = proximo_jogador(jogo);
+    int atual = proximo_jogador(jogo);
+    int proximo = trocar_vez(atual);
     int* jogo_aux = NULL;
 
-    int mm, melhor = -2, jogada = -2;
+    int aux, melhor = -2, jogada = -2;
     for (i = 0; i < 9; i++) {
-        if (jogo[i] == 0) {
-            jogo_aux = copiar_jogo(jogo);
-            if (!jogo_aux) goto falha;
+        if (jogo[i] != 0) continue;
 
-            jogo_aux[i] = proximo;
-            mm = minimax(jogo_aux, trocar_vez(proximo), proximo);
-            if (mm > melhor) {
-                melhor = mm;
-                jogada = i;
-            }
+        jogo_aux = copiar_jogo(jogo);
+        if (!jogo_aux) goto falha;
+        jogo_aux[i] = atual;
 
-            free(jogo_aux);
+        aux = minimax(jogo_aux, proximo, atual);
+        if (aux > melhor) {
+            melhor = aux;
+            jogada = i;
         }
+
+        free(jogo_aux);
     }
 
     return jogada;
