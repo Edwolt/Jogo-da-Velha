@@ -28,6 +28,15 @@ static bool venceu(int* jogo) {
     return false;
 }
 
+static bool cheio(int* jogo) {
+    int i;
+    bool zero = false;
+    for (i = 0; i < 9; i++) {
+        if (jogo[i] == 0) zero = true;
+    }
+    return !zero;
+}
+
 static bool _jogos_possiveis(int** jogos, int* n, int atual, int vez) {
     int i, j, k;
     bool ok;
@@ -43,7 +52,12 @@ static bool _jogos_possiveis(int** jogos, int* n, int atual, int vez) {
 
         // Faz jogada
         jogos[k][i] = vez;
-        if (venceu(jogos[k])) continue;
+        if (venceu(jogos[k]) || cheio(jogos[k])) {
+            free(jogos[k]);
+            jogos[k] = NULL;
+            (*n)--;
+            continue;
+        };
 
         // Passa para a funcao fazer outra jogada
         ok = _jogos_possiveis(jogos, n, k, (vez == 1 ? 2 : 1));
