@@ -5,6 +5,9 @@
 #include "mapa.h"
 
 typedef struct Individuo Individuo;
+struct Individuo {
+    int* genes;
+};
 
 extern int* mapa;
 extern int tam_cromossomo;

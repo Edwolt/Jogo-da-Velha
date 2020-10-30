@@ -75,3 +75,45 @@ int minimax(int* jogo, int vez, int maximizador) {
         return (flag ? 0 : 1);
     }
 }
+
+static int proximo_jogador(int* jogo) {
+    int i;
+    int x = 0, o = 0;
+    for (i = 0; i < 9; i++) {
+        if (jogo[i] == 1) {
+            x++;
+        } else if (jogo[i] == 2) {
+            o++;
+        }
+    }
+    return (x == o ? 1 : 2);
+}
+
+int melhor_jogada(int* jogo) {
+    int i;
+    int proximo = proximo_jogador(jogo);
+    int* jogo_aux = NULL;
+
+    int mm, melhor = -2, jogada = -1;
+    for (i = 0; i < 9; i++) {
+        if (jogo[i] == 0) {
+            jogo_aux = copiar_jogo(jogo);
+            if (!jogo_aux) goto falha;
+
+            jogo_aux[i] = proximo;
+            mm = minimax(jogo_aux, proximo, trocar_vez(proximo));
+            if (mm > melhor) {
+                melhor = mm;
+                jogada = i;
+            }
+
+            free(jogo_aux);
+        }
+    }
+
+    return jogada;
+
+falha:
+    free(jogo_aux);
+    return -1;
+}
