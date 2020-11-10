@@ -1,6 +1,6 @@
 import pygame
 from pygame import Color
-from pygame import draw
+from pygame import draw, display
 from pygame.time import Clock
 from pygame.locals import *
 
@@ -174,7 +174,7 @@ class Jogo:
 
 if __name__ == "__main__":
     pygame.init()
-    tela = pygame.display.set_mode((600, 600))
+    tela = display.set_mode((600, 600))
     jogo = Jogo()
     jogo.desenha(tela)
     clock = Clock()

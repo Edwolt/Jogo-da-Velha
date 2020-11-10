@@ -1,34 +1,36 @@
 ### Compiladores
-CC       := gcc
-
-### Output
-EXEC     := mapa.out
-
-### Pastas
-F_UTIL := util
-F_SRC  := .
-F_BIN  := bin
-
-### Arquivos
-INCLUDES := $(wildcard $(F_SRC)/optional/*.c) $(wildcard $(F_SRC)/optional/*.h)
-SRC      := $(wildcard $(F_SRC)/*.c)
-OBJ      := $(SRC:$(F_SRC)/%.c=$(F_BIN)/%.o)
-HEADER   := $(wildcard $(F_SRC)/*.h)
-MK       := Makefile
-
+CC     := gcc
 
 ### Flags de Compilação
-LIBS     :=
-CFLAGS   := $(LIBS)
-FFLAGS   := $(LIBS) -O3 -march=native -w
-DFLAGS   := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address
-
-FLAGS := $(DFLAGS)
+LIBS   :=
+CFLAGS := $(LIBS)
+FFLAGS := $(LIBS) -O3 -march=native -w
+DFLAGS := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address
+FLAGS  := $(DFLAGS)
 
 # Outras Flags
-RMFLAGS  := -f -v
+RMFLAG := -f -v
 
-.PHONY: all run jogar compile mapa clean
+### Pasta dos .o
+BIN    := bin
+
+### Arquivos
+MAPA   := $(wildcard mapa/*.c)
+MAPA   := $(MAPA:%.c=$(BIN)/%.o)
+
+MODULO := $(wildcard modulos/*.c)
+MODULO := $(MODULOS:%.c=$(BIN)/%.o)
+
+MINMAX := $(wildcard minmax/*.c)
+MINMAX := $(MINMAX:%.c=$(BIN)/%.o)
+
+# UTIL
+.PHONY: subdirs all run jogar mapa minmax clean
+
+subdirs:
+	mkdir -p $(BIN)/mapa
+	mkdir -p $(BIN)/minmax
+	mkdir -p $(BIN)/modulos
 
 ### Ações
 all:
@@ -42,23 +44,24 @@ run: $(EXEC)
 jogar:
 	cd jogo && ../venv/bin/python jogo.py
 
-### Compilação
-compile: clean $(EXEC)
 
-mapa:
-	$(CC) -o mapa.out mapa/mapa.c $(FLAGS)
-	./mapa.out
+### Compilação
+mapa: $(MAPA)
+	$(CC) -o mapa.out $(MAPA) $(FLAGS)
+
+minmax: subdirs $(MODULOS) $(MINMAX)
+	$(CC) -o minmax.out $(MODULOS) $(MINMAX) $(FLAGS)
 
 ### Clean
 clean:
-	rm $(OBJ) $(RMFLAGS)
-	rm $(DEBUG) $(RMFLAGS)
-	rm $(EXEC) $(RMFLAGS)
-
+	rm $(BIN) $(RMFLAG)
 
 ### Exec
-$(EXEC): $(OBJ)
-	$(CC) -o $(EXEC) $(OBJ) $(FLAGS)
-
-$(F_BIN)/%.o: $(F_SRC)/%.c
+$(BIN)/mapa/%.o: mapa/%.c
 	$(CC) -c -o $@ $< $(FLAGS)
+
+$(BIN)/modulos/%.o: modulos/%.c
+	$(CC) -c -o $@ $< $(FLAGS)
+
+$(BIN)/minmax/%.o: minmax/%.c
+	$(CC) -c -o $@ $< $(FLAGS) -I modulos
