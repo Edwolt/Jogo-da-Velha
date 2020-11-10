@@ -5,14 +5,11 @@
 #include "mapa.h"
 
 typedef struct Solucao Solucao;
-struct Solucao {
-    int* sol;
-};
 
 extern int* mapa;
 extern int tam_cromossomo;
 
-Solucao* solucao_novo();
+Solucao* solucao_criar();
 void solucao_apagar(Solucao** solucao);
 
 int solucao_get(Solucao* solucao, int* jogo);

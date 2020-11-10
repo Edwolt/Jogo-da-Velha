@@ -109,17 +109,15 @@ int main() {
     jogos = jogos_possiveis(&n);
     if (!jogos) goto falha;
 
-    solucao = solucao_novo();
+    solucao = solucao_criar();
     if (!solucao) goto falha;
 
     for (i = 0; i < n; i++) {
         solucao_set(solucao, jogos[i], melhor_jogada(jogos[i]));
     }
 
-    for (i = 0; i < tam_cromossomo; i++) {
-        printf("%d\n", solucao->sol[i]);
-    }
     solucao_salvar(solucao, "minmax.txt");
+    printf("Solucao salva em minmax.txt\n");
 
     solucao_apagar(&solucao);
     for (i = 0; i < M; i++) free(jogos[i]);
