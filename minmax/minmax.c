@@ -1,5 +1,8 @@
 #include "minimax.h"
 
+/**
+ * Vetor com todas as opcoes de vitoria
+ */
 static int vitorias[8][3] = {{0, 1, 2},
                              {3, 4, 5},
                              {6, 7, 8},
@@ -12,6 +15,7 @@ static int vitorias[8][3] = {{0, 1, 2},
 inline static int trocar_vez(int vez) { return (vez == 1 ? 2 : 1); }
 
 /**
+ * Retorna quem venceu o jogo
  * 0: Ainda tem jogadas a ser feitas
  * 1: O jogador X ganhou
  * 2: O jogador O ganhou
@@ -34,6 +38,9 @@ static int calc_vencedor(int* jogo) {
     return (zero ? 0 : 3);
 }
 
+/**
+ * Cria uma copia do vetor jogo
+ */
 static int* copiar_jogo(int* jogo) {
     int i;
     int* novo_jogo = malloc(9 * sizeof(int));
@@ -101,6 +108,9 @@ falha:
     return 0;
 }
 
+/**
+ * Calcula qual o proximo jogador a jogar
+ */
 static int proximo_jogador(int* jogo) {
     int i;
     int x = 0, o = 0;

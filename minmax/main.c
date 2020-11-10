@@ -7,6 +7,9 @@
 const int N = 19683;   // powi(3, 9); numero de arranjos possiveis de X e O
 const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1, Numemro maximo de recursoes de jogo_possiveis()
 
+/**
+ * Vetor com todas as opcoes de vitoria
+ */
 static int vitorias[8][3] = {{0, 1, 2},
                              {3, 4, 5},
                              {6, 7, 8},
@@ -16,6 +19,9 @@ static int vitorias[8][3] = {{0, 1, 2},
                              {0, 4, 8},
                              {2, 4, 6}};
 
+/**
+ * Retorna se alguém venceu o jogo
+ */
 static bool venceu(int* jogo) {
     int i;
     int a, b, c;
@@ -28,6 +34,9 @@ static bool venceu(int* jogo) {
     return false;
 }
 
+/**
+ * Retorna se o jogo deu velha
+ */
 static bool cheio(int* jogo) {
     int i;
     bool zero = false;
@@ -37,6 +46,11 @@ static bool cheio(int* jogo) {
     return !zero;
 }
 
+/**
+ * jogos deve comecar com o primeiro jogo com tudo 0
+ * n deve comecar valendo 1 e sera usado para armazenar dados no vetor
+ * Retorna se a operacao foi possivel
+ */
 static bool _jogos_possiveis(int** jogos, int* n, int atual, int vez) {
     int i, j, k;
     bool ok;
@@ -69,9 +83,14 @@ falha:
     return false;
 }
 
+/**
+ * Retorna em jogos uma lista de todos os jogos possiveis de acontecer
+ * Retorna em n quantas posicoes foram usadas
+ */
 static inline int** jogos_possiveis(int* n) {
-    int i;
     int** jogos = NULL;
+
+    int i;
     bool ok;
 
     // Aloca array de jogos
@@ -92,18 +111,22 @@ static inline int** jogos_possiveis(int* n) {
     return jogos;
 
 falha:
-    for (i = 0; i < M; i++) free(jogos[i]);
-    free(jogos);
+    if (jogos) {
+        for (i = 0; i < M; i++) free(jogos[i]);
+        free(jogos);
+    }
     return NULL;
 }
 
 int main() {
-    int i;
-    int n;
     int** jogos = NULL;
     Solucao* solucao = NULL;
 
-    bool ok = carregar_mapa();
+    int i;
+    int n;
+    bool ok;
+
+    ok = carregar_mapa();
     if (!ok) goto falha;
 
     jogos = jogos_possiveis(&n);
