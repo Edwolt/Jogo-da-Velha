@@ -48,7 +48,8 @@ void solucao_set(Solucao* solucao, int* jogo, int jogada);
 
 /**
  * Salva a solucao no arquivo em path
+ * Retorna se a operacao foi possivel
  */
-void solucao_salvar(Solucao* solucao, char* path);
+bool solucao_salvar(Solucao* solucao, char* path);
 
 #endif

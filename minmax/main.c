@@ -31,7 +31,8 @@ int main() {
         solucao_set(solucao, jogos[i], melhor_jogada(jogos[i]));
     }
 
-    solucao_salvar(solucao, "minmax.txt");
+    ok = solucao_salvar(solucao, "minmax.txt");
+    if (!ok) goto falha;
     printf("Solucao salva em minmax.txt\n");
 
     solucao_apagar(&solucao);

@@ -6,6 +6,8 @@ struct Solucao {
 
 Solucao* solucao_criar() {
     Solucao* solucao = malloc(sizeof(solucao));
+    if (!solucao) return NULL;
+
     solucao->cromossomo = malloc(tam_cromossomo * sizeof(int));
     int i;
     for (i = 0; i < tam_cromossomo; i++) solucao->cromossomo[i] = -1;
@@ -21,6 +23,8 @@ void solucao_apagar(Solucao** solucao) {
 }
 
 int solucao_get(Solucao* solucao, int* jogo) {
+    if (!solucao) return -1;
+
     int sim = calc_sim(jogo);
     int minimo = calc_val(jogo, sim);
     int gene = mapa[minimo];
@@ -29,6 +33,8 @@ int solucao_get(Solucao* solucao, int* jogo) {
 }
 
 void solucao_set(Solucao* solucao, int* jogo, int jogada) {
+    if (!solucao) return;
+
     int sim = calc_sim(jogo);
     int minimo = calc_val(jogo, sim);
     int gene = mapa[minimo];
@@ -37,11 +43,33 @@ void solucao_set(Solucao* solucao, int* jogo, int jogada) {
     solucao->cromossomo[gene] = jogada;
 }
 
-void solucao_salvar(Solucao* solucao, char* path) {
-    FILE* file = fopen(path, "w");
+int solucao_gene_get(Solucao* solucao, int i) {
+    if (!solucao) return -1;
+    return solucao->cromossomo[i];
+}
+
+void solucao_gene_set(Solucao* solucao, int i, int val) {
+    if (!solucao) return;
+    solucao->cromossomo[i] = val;
+}
+
+bool solucao_salvar(Solucao* solucao, char* path) {
+    if (!solucao) return false;
+
+    FILE* arquivo = NULL;
     int i;
+
+    arquivo = fopen(path, "w");
+    if (!arquivo) goto falha;
+
     for (i = 0; i < tam_cromossomo; i++) {
-        fprintf(file, "%d\n", solucao->cromossomo[i]);
+        fprintf(arquivo, "%d\n", solucao->cromossomo[i]);
+        if (ferror(arquivo)) goto falha;
     }
-    fclose(file);
+    fclose(arquivo);
+    return true;
+
+falha:
+    fclose(arquivo);
+    return false;
 }
