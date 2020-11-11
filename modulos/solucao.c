@@ -14,6 +14,15 @@ Solucao* solucao_criar() {
     return solucao;
 }
 
+Solucao* solucao_criar_random() {
+    Solucao* solucao = solucao_criar();
+    if (!solucao) return NULL;
+
+    int i;
+    for (i = 0; i < tam_cromossomo; i++) solucao->cromossomo[i] = rand() % 9;
+    return solucao;
+}
+
 void solucao_apagar(Solucao** solucao) {
     if (!solucao || !*solucao) return;
 

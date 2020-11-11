@@ -1,7 +1,7 @@
 #ifndef SOLUCAO_H
 #define SOLUCAO_H
 
-#include <stdlib.h>
+#include <stdlib.h> // malloc, rand
 #include "mapa.h"
 #include "util.h"
 
@@ -30,6 +30,11 @@ extern int tam_cromossomo;
 Solucao* solucao_criar();
 
 /**
+ * Cria um objeto solucao com valores aleatorios
+ */
+Solucao* solucao_criar_random();
+
+/**
  * Destroi um objeto solucao desalocando ele da memoria
  */
 void solucao_apagar(Solucao** solucao);
@@ -45,6 +50,16 @@ int solucao_get(Solucao* solucao, int* jogo);
  * deve ser feito a essa jogada
  */
 void solucao_set(Solucao* solucao, int* jogo, int jogada);
+
+/**
+ * Retorna o valor que esta no gene i
+ */
+int solucao_gene_get(Solucao* solucao, int i);
+
+/**
+ * O valor do gene i passa a valer val
+ */
+void solucao_gene_set(Solucao* solucao, int i, int val);
 
 /**
  * Salva a solucao no arquivo em path
