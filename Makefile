@@ -28,18 +28,17 @@ MAPA      := $(MAPA:%.c=$(BIN)/%.o)
 MINMAX    := $(wildcard minmax/*.c)
 MINMAX    := $(MINMAX:%.c=$(BIN)/%.o)
 
-EVOLUTIVO := $(wildcard minmax/*.c)
-EVOLUTIVO := $(MINMAX:%.c=$(BIN)/%.o)
+EVOLUTIVO := $(wildcard evolutivo/*.c)
+EVOLUTIVO := $(EVOLUTIVO:%.c=$(BIN)/%.o)
 
 # Util
-.PHONY: subdirs all clean\
-		run_jogar run_mapa run_minmax run_evolutivo\
-		comp_mapa comp_minmax comp_evoltivo
+.PHONY: subdirs all clean run_jogar run_mapa run_minmax run_evolutivo\
 
 subdirs:
 	mkdir -p $(BIN)/mapa
 	mkdir -p $(BIN)/minmax
 	mkdir -p $(BIN)/modulos
+	mkdir -p $(BIN)/evolutivo
 
 ### Acoes
 all:
@@ -47,31 +46,32 @@ all:
 	$(MAKE) compile
 
 clean:
-	rm $(BIN)/modulos/*.o $(RMFLAG)
 	rm $(BIN)/mapa/*.o $(RMFLAG)
 	rm $(BIN)/minmax/*.o $(RMFLAG)
+	rm $(BIN)/modulos/*.o $(RMFLAG)
+	rm $(BIN)/evolutivo/*.o $(RMFLAG)
 
 # Rodar Programa
 run_jogo:
 	cd jogo && ../venv/bin/python jogo.py
 
-run_mapa:
+run_mapa: mapa.out
 	./mapa.out
 
-run_minmax:
+run_minmax: minmax.out
 	./minmax.out
 
-run_evolutivo:
-	./evoltivo.out
+run_evolutivo: evolutivo.out
+	./evolutivo.out
 
 # Compilar programa
-comp_mapa: subdirs $(MODULOS) $(MAPA)
+mapa.out: subdirs $(MODULOS) $(MAPA)
 	$(CC) -o mapa.out $(MODULOS) $(MAPA) $(FLAGS)
 
-comp_minmax: subdirs $(MODULOS) $(MINMAX)
+minmax.out: subdirs $(MODULOS) $(MINMAX)
 	$(CC) -o minmax.out $(MODULOS) $(MINMAX) $(FLAGS)
 
-comp_evoltivo: subdirs $(MODULOS) $(EVOLUTIVO)
+evolutivo.out: subdirs $(MODULOS) $(EVOLUTIVO)
 	$(CC) -o evolutivo.out $(MODULOS) $(EVOLUTIVO) $(FLAGS)
 
 ### Compilando ...
@@ -84,5 +84,5 @@ $(BIN)/mapa/%.o: mapa/%.c
 $(BIN)/minmax/%.o: minmax/%.c
 	$(CC) -c -o $@ $< $(FLAGS) -iquote modulos
 
-$(BIN)/evoltivo/%.o: evoltivo/%.c
+$(BIN)/evolutivo/%.o: evolutivo/%.c
 	$(CC) -c -o $@ $< $(FLAGS) -iquote modulos

@@ -3,11 +3,11 @@ Implementação de um jogo da velha jogado entre uma pessoa e o computador
 
 Primeiramente, é necessário criar um arquivo chamado mapa.txt .
 para isso use o comando: 
-`make comp_mapa run_mapa`
+`make run_mapa`
 
 Depois é necessário calcular as jogadas que o computador fará
 para isso use o comando:
-`make comp_minmax run_minmax`
+`make run_minmax`
 
 Para poder rodar o jogo use o comando:
 `make run_jogo`
