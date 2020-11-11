@@ -14,15 +14,31 @@ extern int vitorias[8][3];
 
 /**
  * Salva mapa em uma arquivo em path
+ * Retorna se a operacao foi possivel
  */
-static void salva_mapa(char* path, int* mapa, int tam_mapa, int tam_cromossomo) {
+static bool salva_mapa(char* path, int* mapa, int tam_mapa, int tam_cromossomo) {
+    if (!path || !mapa) return false;
+
+    FILE* arquivo = NULL;
     int i;
-    FILE* arquivo = fopen(path, "w");
-    if (!arquivo) return;
+
+    arquivo = fopen(path, "w");
+    if (!arquivo) goto falha;
 
     fprintf(arquivo, "%d %d\n", tam_mapa, tam_cromossomo);
-    for (i = 0; i < tam_mapa; i++) fprintf(arquivo, "%d\n", mapa[i]);
+    if (ferror(arquivo)) goto falha;
+
+    for (i = 0; i < tam_mapa; i++) {
+        fprintf(arquivo, "%d\n", mapa[i]);
+        if (ferror(arquivo)) goto falha;
+    }
+
     fclose(arquivo);
+    return true;
+
+falha:
+    fclose(arquivo);
+    return false;
 }
 
 /**
@@ -35,6 +51,7 @@ int main() {
     int** jogos = NULL;
 
     int i;
+    bool ok;
     int m;
     int minimos[M];          // 0..M -> 0..N
     bool freq[N];            //
@@ -69,7 +86,8 @@ int main() {
     }
 
     // Salva o mapa e um arquivo
-    salva_mapa("mapa.txt", mapa, tam_mapa, tam_cromossomo);
+    ok = salva_mapa("mapa.txt", mapa, tam_mapa, tam_cromossomo);
+    if (!ok) goto falha;
 
     // Desalocando memória
     for (i = 0; i < M; i++) free(jogos[i]);
