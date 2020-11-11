@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include "util.h"
+
+extern int vitorias[8][3];
 
 /**
  * Retorna se aquela jogada resultara em uma vitoria, empate ou derrota

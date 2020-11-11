@@ -1,17 +1,5 @@
 #include "minimax.h"
 
-/**
- * Vetor com todas as opcoes de vitoria
- */
-static int vitorias[8][3] = {{0, 1, 2},
-                             {3, 4, 5},
-                             {6, 7, 8},
-                             {0, 3, 6},
-                             {1, 4, 7},
-                             {2, 5, 8},
-                             {0, 4, 8},
-                             {2, 4, 6}};
-
 inline static int trocar_vez(int vez) { return (vez == 1 ? 2 : 1); }
 
 /**
@@ -38,20 +26,11 @@ static int calc_vencedor(int* jogo) {
     return (zero ? 0 : 3);
 }
 
-/**
- * Cria uma copia do vetor jogo
- */
-static int* copiar_jogo(int* jogo) {
-    int i;
-    int* novo_jogo = malloc(9 * sizeof(int));
-    for (i = 0; i < 9; i++) novo_jogo[i] = jogo[i];
-    return novo_jogo;
-}
-
 int minimax(int* jogo, int vez, int maximizador) {
+    int* jogo_aux = NULL;
+
     int i;
     int aux;
-    int* jogo_aux = NULL;
     bool zero;
 
     // Se for um nó terminal
@@ -125,12 +104,12 @@ static int proximo_jogador(int* jogo) {
 }
 
 int melhor_jogada(int* jogo) {
-    int i;
-    int atual = proximo_jogador(jogo);
-    int proximo = trocar_vez(atual);
     int* jogo_aux = NULL;
 
+    int i;
+    int atual = proximo_jogador(jogo), proximo = trocar_vez(atual);
     int aux, melhor = -2, jogada = -2;
+
     for (i = 0; i < 9; i++) {
         if (jogo[i] != 0) continue;
 

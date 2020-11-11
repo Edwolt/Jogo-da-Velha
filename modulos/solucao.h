@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 #include "mapa.h"
+#include "util.h"
+
+extern int simetrias[8][9];
+extern int simetrias_reversa[8][9];
 
 /**
  * Armazena uma possivel solucao para o jogo da velha
