@@ -5,10 +5,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * Use o metodo carregar_mapa() para carregar o mapa na memoria
+ */
 extern int* mapa;
+
+/**
+ * Tamanho do cromossomo de mapa
+ */
 extern int tam_cromossomo;
 
-bool carregar_mapa();
+/**
+ * Carrega o mapa na memoria
+ */
+bool carregar_mapa(char* path);
+
+/**
+ * Descarrega o mapa da memoria
+ */
 void free_mapa();
 
 #endif

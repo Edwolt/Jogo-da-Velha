@@ -126,7 +126,7 @@ int main() {
     int n;
     bool ok;
 
-    ok = carregar_mapa();
+    ok = carregar_mapa("mapa.txt");
     if (!ok) goto falha;
 
     jogos = jogos_possiveis(&n);

@@ -3,8 +3,8 @@
 int* mapa = NULL;
 int tam_cromossomo = 0;
 
-bool carregar_mapa() {
-    FILE* file = fopen("mapa.txt", "r");
+bool carregar_mapa(char* path) {
+    FILE* file = fopen(path, "r");
     if (!file) return false;
 
     int i;
