@@ -34,7 +34,7 @@ EVOLUTIVO := $(MINMAX:%.c=$(BIN)/%.o)
 # Util
 .PHONY: subdirs all clean\
 		run_jogar run_mapa run_minmax run_evolutivo\
-		mapa minmax evoltivo
+		comp_mapa comp_minmax comp_evoltivo
 
 subdirs:
 	mkdir -p $(BIN)/mapa
@@ -52,7 +52,7 @@ clean:
 	rm $(BIN)/minmax/*.o $(RMFLAG)
 
 # Rodar Programa
-run_jogar:
+run_jogo:
 	cd jogo && ../venv/bin/python jogo.py
 
 run_mapa:
@@ -65,13 +65,13 @@ run_evolutivo:
 	./evoltivo.out
 
 # Compilar programa
-mapa: subdirs $(MODULOS) $(MAPA)
+comp_mapa: subdirs $(MODULOS) $(MAPA)
 	$(CC) -o mapa.out $(MODULOS) $(MAPA) $(FLAGS)
 
-minmax: subdirs $(MODULOS) $(MINMAX)
+comp_minmax: subdirs $(MODULOS) $(MINMAX)
 	$(CC) -o minmax.out $(MODULOS) $(MINMAX) $(FLAGS)
 
-evoltivo: subdirs $(MODULOS) $(EVOLUTIVO)
+comp_evoltivo: subdirs $(MODULOS) $(EVOLUTIVO)
 	$(CC) -o evolutivo.out $(MODULOS) $(EVOLUTIVO) $(FLAGS)
 
 ### Compilando ...
