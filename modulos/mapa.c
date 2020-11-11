@@ -4,22 +4,30 @@ int* mapa = NULL;
 int tam_cromossomo = 0;
 
 bool carregar_mapa(char* path) {
-    FILE* file = fopen(path, "r");
-    if (!file) return false;
-
+    FILE* arquivo = NULL;
     int i;
     int tam_mapa;
-    fscanf(file, "%d %d", &tam_mapa, &tam_cromossomo);
+
+    arquivo = fopen(path, "r");
+    if (!arquivo) goto falha;
+
+    fscanf(arquivo, "%d %d", &tam_mapa, &tam_cromossomo);
+    if (ferror(arquivo)) goto falha;
 
     mapa = malloc(tam_mapa * sizeof(int));
     int dado;
     for (i = 0; i < tam_mapa; i++) {
-        fscanf(file, "%d", &dado);
+        fscanf(arquivo, "%d", &dado);
         mapa[i] = dado;
     }
 
-    fclose(file);
+    fclose(arquivo);
     return true;
+
+falha:
+    fclose(arquivo);
+    free_mapa(mapa);
+    return false;
 }
 
 void free_mapa() {
