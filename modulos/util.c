@@ -40,25 +40,28 @@ int powi(int x, int n) {
     return y;
 }
 
-bool venceu(int* jogo) {
+/**
+ * Retorna quem venceu o jogo
+ * 0: Ainda tem jogadas a ser feitas
+ * 1: O jogador X ganhou
+ * 2: O jogador O ganhou
+ * 3: deu velha
+ */
+int calc_vencedor(int* jogo) {
     int i;
     int a, b, c;
     for (i = 0; i < 8; i++) {
         a = vitorias[i][0];
         b = vitorias[i][1];
         c = vitorias[i][2];
-        if (jogo[a] != 0 && jogo[a] == jogo[b] && jogo[b] == jogo[c]) return true;
+        if (jogo[a] != 0 && jogo[a] == jogo[b] && jogo[b] == jogo[c]) return jogo[a];
     }
-    return false;
-}
-
-bool cheio(int* jogo) {
-    int i;
     bool zero = false;
     for (i = 0; i < 9; i++) {
         if (jogo[i] == 0) zero = true;
     }
-    return !zero;
+
+    return (zero ? 0 : 3);
 }
 
 int calc_min(int* jogo) {

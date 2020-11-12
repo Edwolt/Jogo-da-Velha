@@ -6,6 +6,7 @@
 
 inline static int min(int a, int b) { return (a < b ? a : b); }
 inline static int max(int a, int b) { return (a > b ? a : b); }
+inline static int trocar_vez(int vez) { return (vez == 1 ? 2 : 1); }
 
 /**
  * jogada -> jogada'
@@ -31,14 +32,26 @@ extern int vitorias[8][3];
 int powi(int x, int n);
 
 /**
+ * Retorna quem venceu o jogo
+ * 0: Ainda tem jogadas a ser feitas
+ * 1: O jogador X ganhou
+ * 2: O jogador O ganhou
+ * 3: deu velha
+ */
+int calc_vencedor(int* jogo);
+
+/**
  * Retorna se alguém venceu o jogo
  */
-bool venceu(int* jogo);
+inline static bool venceu(int* jogo) {
+    int vencedor = calc_vencedor(jogo);
+    return vencedor == 1 || vencedor == 2;
+}
 
 /**
  * Retorna se o jogo deu velha
  */
-bool cheio(int* jogo);
+inline static bool cheio(int* jogo) { return calc_vencedor(jogo) == 3; }
 
 /**
  * Retorna o menor valor entre os jogos e seus simetricos

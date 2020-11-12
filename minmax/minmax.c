@@ -1,31 +1,5 @@
 #include "minimax.h"
 
-inline static int trocar_vez(int vez) { return (vez == 1 ? 2 : 1); }
-
-/**
- * Retorna quem venceu o jogo
- * 0: Ainda tem jogadas a ser feitas
- * 1: O jogador X ganhou
- * 2: O jogador O ganhou
- * 3: deu velha
- */
-static int calc_vencedor(int* jogo) {
-    int i;
-    int a, b, c;
-    for (i = 0; i < 8; i++) {
-        a = vitorias[i][0];
-        b = vitorias[i][1];
-        c = vitorias[i][2];
-        if (jogo[a] != 0 && jogo[a] == jogo[b] && jogo[b] == jogo[c]) return jogo[a];
-    }
-    bool zero = false;
-    for (i = 0; i < 9; i++) {
-        if (jogo[i] == 0) zero = true;
-    }
-
-    return (zero ? 0 : 3);
-}
-
 int minimax(int* jogo, int vez, int maximizador) {
     int* jogo_aux = NULL;
 
