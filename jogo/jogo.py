@@ -161,7 +161,7 @@ class Jogo:
 
         self.jogo[i] = self.jogador
         self.troca_vez()
-        jogo.procura_vitoria()
+        self.procura_vitoria()
         return True
 
     def on_click(self, pos):
@@ -170,6 +170,18 @@ class Jogo:
         i = y*3 + x
         if self.jogo[i] == 0:
             return self.fazer_jogada(i)
+
+
+def protege_jogada(jogo: Jogo, jogada):
+    if jogo.velha:
+        return jogada
+    if jogo.jogo[jogada] == 0:
+        return jogada
+
+    try:
+        return jogo.jogo.index(0)
+    except ValueError:
+        return jogada
 
 
 if __name__ == "__main__":
@@ -188,7 +200,7 @@ if __name__ == "__main__":
                 quit(0)
             elif event.type == MOUSEBUTTONDOWN:
                 if jogo.on_click(event.pos):
-                    jogo.fazer_jogada(solucao.get(jogo.jogo))
+                    jogo.fazer_jogada(protege_jogada(solucao.get(jogo.jogo)))
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 jogo.__init__()
 
