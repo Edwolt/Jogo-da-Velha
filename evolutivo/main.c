@@ -4,7 +4,14 @@
 #include "populacao.h"
 #include "solucao.h"
 
-static inline sair() { return kbhit() && getchar() == 'q'; }
+static inline bool sair() {
+    char c;
+    if (kbhit()) {
+        c = getchar();
+        if (c == 'q' || c == 'Q') return true;
+    }
+    return false;
+}
 
 int main() {
     srand(time(NULL));

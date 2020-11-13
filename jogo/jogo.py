@@ -132,10 +132,10 @@ class Jogo:
             if i == 2:
                 self.desenha_o(tela, (k % 3, k // 3))
 
-        if self.velha:
-            self.desenha_v(tela)
-        elif self.vencedor != 0:
+        if self.vencedor != 0:
             self.desenha_linha(tela)
+        elif self.velha:
+            self.desenha_v(tela)
 
         pygame.display.flip()
 
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     jogo = Jogo()
     jogo.desenha(tela)
     clock = Clock()
-    solucao = Solucao('../minmax.txt')
+    solucao = Solucao('../evolutivo.txt')
 
     while True:
         clock.tick(30)
@@ -200,7 +200,7 @@ if __name__ == "__main__":
                 quit(0)
             elif event.type == MOUSEBUTTONDOWN:
                 if jogo.on_click(event.pos):
-                    jogo.fazer_jogada(protege_jogada(solucao.get(jogo.jogo)))
+                    jogo.fazer_jogada(protege_jogada(jogo, solucao.get(jogo.jogo)))
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 jogo.__init__()
 

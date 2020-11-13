@@ -32,7 +32,7 @@ EVOLUTIVO := $(wildcard evolutivo/*.c)
 EVOLUTIVO := $(EVOLUTIVO:%.c=$(BIN)/%.o)
 
 # Util
-.PHONY: subdirs all clean run_jogar run_mapa run_minmax run_evolutivo\
+.PHONY: subdirs all clean run_jogo run_mapa run_minmax run_evolutivo\
 
 subdirs:
 	mkdir -p $(BIN)/mapa
