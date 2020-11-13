@@ -1,6 +1,7 @@
 #include <stdlib.h>  // malloc, rand
 #include <time.h>
 #include "kbhit.h"
+#include "mapa.h"
 #include "populacao.h"
 #include "solucao.h"
 
@@ -15,35 +16,59 @@ static inline bool sair() {
 
 int main() {
     srand(time(NULL));
+    const int N = 500;
+    const int MUTACAO = RAND_MAX * 0.02;  // 2%
 
     Populacao* populacao = NULL;
     int i = 0;
-    int mutacao = RAND_MAX * 0.02;  // 2%
+    bool ok;
 
-    populacao = populacao_criar(500);
-    if (!populacao) goto falha;
+    ok = carregar_mapa("mapa.txt");
+    if (!ok) {
+        printf("mapa\n");
+        goto falha;
+    }
+
+    populacao = populacao_criar(N);
+    if (!populacao) {
+        printf("populacao\n");
+        goto falha;
+    }
 
     enable_raw_mode();
-    while (!sair()) {
+    while (!sair() && i < 10000000) {
         populacao_fitness(populacao);
-        populacao_predacao_sintese(populacao);
-        if (i % 10 == 0) populacao_predacao_randomica(populacao);
+        if (i % 10 == 0) {
+            ok = populacao_predacao_randomica(populacao);
+            if (!ok) {
+                printf("sintese\n");
+                goto falha;
+            }
+        } else {
+            ok = populacao_predacao_sintese(populacao);
+            if (!ok) {
+                printf("random\n");
+                goto falha;
+            }
+        }
 
         populacao_torneio(populacao);
-        populacao_mutacao(populacao, mutacao);
-
-        printf("Geracao %d\n", i++);
+        populacao_mutacao(populacao, MUTACAO);
+        printf("Geracao %d: %d\n", i++, populacao_get_fitness(populacao, 0));
     }
     disable_raw_mode();
 
-    populacao_salvar(populacao, "evolutivo", NULL);
+    populacao_fitness(populacao);
+    printf("%d geracoes processadas alcancando %d\n", i, populacao_get_fitness(populacao, 0));
+    populacao_salvar(populacao, "evolutivo.txt", NULL);
     populacao_apagar(&populacao);
 
-    printf("%d geracoes processadas\n", i);
     return EXIT_SUCCESS;
 
 falha:
+    disable_raw_mode();
     populacao_apagar(&populacao);
+    free_mapa();
     printf("Falha ao rodar algoritmo evolutivo\n");
     return EXIT_FAILURE;
 }

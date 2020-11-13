@@ -6,7 +6,7 @@
 #include "mapa.h"
 #include "solucao.h"
 
-extern tam_cromossomo;
+extern int tam_cromossomo;
 
 typedef struct Populacao Populacao;
 
@@ -24,10 +24,12 @@ bool populacao_torneio(Populacao* populacao);
 
 void populacao_mutacao(Populacao* populacao, int mutacao);
 
-void populacao_predacao_sintese(Populacao* populacao);
+bool populacao_predacao_sintese(Populacao* populacao);
 
-void populacao_predacao_randomica(Populacao* populacao);
+bool populacao_predacao_randomica(Populacao* populacao);
 
 void populacao_salvar(Populacao* populacao, char* melhor, char* todos);
+
+int populacao_get_fitness(Populacao* populacao, int i);
 
 #endif
