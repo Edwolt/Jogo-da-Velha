@@ -141,7 +141,7 @@ class Jogo:
 
     def procura_vitoria(self):
         for a, b, c in vitorias:
-            if self.jogo[a] == self.jogo[b] == self.jogo[c]:
+            if self.jogo[a] == self.jogo[b] == self.jogo[c] != 0:
                 self.vencedor = self.jogo[a]
                 self.linha = (a, b, c)
         for i in self.jogo:
@@ -155,9 +155,10 @@ class Jogo:
     def fazer_jogada(self, i):
         if self.vencedor != 0 or self.velha:
             return False
+
         if self.jogo[i] != 0:
-            print(f'BUG: Jogando em cima de {i}')
-            return False
+            print(f'Jogando em {protege_jogada(self, i)} em vez de {i}')
+            i = protege_jogada(self, i)
 
         self.jogo[i] = self.jogador
         self.troca_vez()
@@ -185,12 +186,29 @@ def protege_jogada(jogo: Jogo, jogada):
 
 
 if __name__ == "__main__":
+    print('Escolha uma solucao:')
+    print('[0] Minmax')
+    print('[1] Evolutivo')
+    print('[2] Digitar uma opcao')
+    opcao = int(input())
+    if opcao == 0:
+        path = '../minmax.txt'
+    elif opcao == 1:
+        path = '../evolutivo.txt'
+    elif opcao == 2:
+        path = f'../{input()}'
+    else:
+        raise 'Valor invalido'
+
+    print(path)
+
     pygame.init()
     tela = display.set_mode((600, 600))
     jogo = Jogo()
     jogo.desenha(tela)
     clock = Clock()
-    solucao = Solucao('../evolutivo.txt')
+
+    solucao = Solucao(path)
 
     while True:
         clock.tick(30)
@@ -200,7 +218,7 @@ if __name__ == "__main__":
                 quit(0)
             elif event.type == MOUSEBUTTONDOWN:
                 if jogo.on_click(event.pos):
-                    jogo.fazer_jogada(protege_jogada(jogo, solucao.get(jogo.jogo)))
+                    jogo.fazer_jogada(solucao.get(jogo.jogo))
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 jogo.__init__()
 
