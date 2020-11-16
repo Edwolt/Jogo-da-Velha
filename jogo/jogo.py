@@ -33,7 +33,7 @@ simetrias_reversa = (
 )
 
 
-class Solucao:
+class Individuo:
     def __init__(self, path):
         with open('../mapa.txt', 'r') as file:
             a, b = file.readline().split(' ')
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     jogo.desenha(tela)
     clock = Clock()
 
-    solucao = Solucao(path)
+    solucao = Individuo(path)
 
     while True:
         clock.tick(30)
