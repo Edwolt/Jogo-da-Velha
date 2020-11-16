@@ -13,6 +13,10 @@ static inline bool sair() {
     return false;
 }
 
+/**
+ * Calcula uma solucao usando algoritmo evolutivo
+ * e salva em evolutivo.txt
+ */
 int main() {
     srand(time(NULL));
     const int n = 200;

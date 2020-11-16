@@ -64,6 +64,21 @@ byte calc_vencedor(byte* jogo) {
     return 3;
 }
 
+/*
+calc_min, calc_sim e calc_val usa simetrias_reversa e nao simetrias
+a ideia é que eu passasse o jogo pela simetria e depois percorresse calculando o valor
+
+for i in 0..8
+    jogo_simetrico = aplica simetria[i] no jogo
+    for j in 0..9
+        numero += jogo_simetrico[j]
+
+Para conseguir fazer isso sem ter que aplicar a simetria ao jogo
+eu posso transformar a posicao j de uma posicao j dentro da simetria i
+para a posicao equivalente no jogo especifico que foi passado,
+e para isso usamos simtreias_reversa
+*/
+
 int calc_min(byte* jogo) {
     int i, j;
     int minimo = 3 * N;  // Nao tem como dar um numero maior que N

@@ -10,6 +10,10 @@ static const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*
 
 extern byte vitorias[8][3];
 
+/**
+ * Calcula um individuo testando todas as opcoes possiveis de jogo
+ * e salva em minmax.txt
+ */
 int main() {
     byte** jogos = NULL;
     Individuo* individuo = NULL;
