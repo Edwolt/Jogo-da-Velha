@@ -1,6 +1,7 @@
 .vscode
 *.txt
 *.sh
+*.csv
 
 ##### C #####
 # Prerequisites

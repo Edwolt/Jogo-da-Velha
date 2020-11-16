@@ -16,50 +16,66 @@ static inline bool sair() {
 
 int main() {
     srand(time(NULL));
-    const int N = 500;
-    const int MUTACAO = RAND_MAX * 0.02;  // 2%
+    int n = 200;
+    int predados = 2;
+    int preiodo_predacao = 10;
+    double mutacao = 0.01;
 
     Populacao* populacao = NULL;
     int i = 0;
     bool ok;
+    bool mudou;
+    int nao_muda = 0;
+    int muda = 0;
+    int zero = 0;
 
     ok = carregar_mapa("mapa.txt");
-    if (!ok) {
-        printf("mapa\n");
-        goto falha;
-    }
+    if (!ok) goto falha;
 
-    populacao = populacao_criar(N);
-    if (!populacao) {
-        printf("populacao\n");
-        goto falha;
-    }
+    populacao = populacao_criar(n);
+    if (!populacao) goto falha;
 
     enable_raw_mode();
-    while (!sair() && i < 10000000) {
-        populacao_fitness(populacao);
-        if (i % 10 == 0) {
-            ok = populacao_predacao_randomica(populacao);
-            if (!ok) {
-                printf("sintese\n");
-                goto falha;
-            }
-        } else {
-            ok = populacao_predacao_sintese(populacao);
-            if (!ok) {
-                printf("random\n");
-                goto falha;
-            }
+    while (!sair()) {
+        mudou = populacao_fitness(populacao);
+        // mutacao = mutacao * (mudou ? 0.99 : 1.01);
+        // if (muda > 3) {
+        //     mutacao *= 0.8;
+        //     muda = 0;
+        // } else if (nao_muda > 5) {
+        //     mutacao *= 1 / 0.8;
+        //     nao_muda = 0;
+        // }
+        // nao_muda = (mudou ? 0 : nao_muda + 1);
+        // muda = (mudou ? muda + 1 : 0);
+
+        ok = populacao_predacao_sintese(populacao);
+        if (!ok) goto falha;
+
+        if (i % preiodo_predacao == 0) {
+            ok = populacao_predacao_randomica(populacao, predados);
+            if (!ok) goto falha;
         }
+        // if (-5 < populacao_get_fitness(populacao, 0) && populacao_get_fitness(populacao, 0) < 5) {
+        //     zero++;
+        // } else {
+        //     zero = 0;
+        // }
+        // if (zero > 3) {
+        //     ok = populacao_predacao_randomica(populacao, predados);
+        //     if (!ok) goto falha;
+        // }
 
         populacao_torneio(populacao);
-        populacao_mutacao(populacao, MUTACAO);
-        printf("Geracao %d: %d\n", i++, populacao_get_fitness(populacao, 0));
+        populacao_mutacao(populacao, mutacao);
+        // printf("Geracao %d: %3d;\tMutacao %.10lf: %d %d %d\n", i++, populacao_get_fitness(populacao, 0), mutacao, muda, nao_muda, zero);
+        printf("Geracao %d: %3d\n", i++, populacao_get_fitness(populacao, 0));
+        if (zero > 3) zero = 0;
     }
     disable_raw_mode();
 
     populacao_fitness(populacao);
-    printf("%d geracoes processadas alcancando %d\n", i, populacao_get_fitness(populacao, 0));
+    printf("\n%d geracoes processadas alcancando %d\n", i, populacao_get_fitness(populacao, 0));
     populacao_salvar(populacao, "evolutivo.txt", NULL);
     populacao_apagar(&populacao);
 
@@ -69,6 +85,6 @@ falha:
     disable_raw_mode();
     populacao_apagar(&populacao);
     free_mapa();
-    printf("Falha ao rodar algoritmo evolutivo\n");
+    printf("\nFalha ao rodar algoritmo evolutivo\n");
     return EXIT_FAILURE;
 }

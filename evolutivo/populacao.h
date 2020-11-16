@@ -18,15 +18,17 @@ void populacao_apagar(Populacao** populacao);
  * Calcula fitness de cada individuo na populacao
  * Protege o melhor de todos de mutação e ajuda no algoritmo de sintese
  */
-void populacao_fitness(Populacao* populacao);
+bool populacao_fitness(Populacao* populacao);
 
 bool populacao_torneio(Populacao* populacao);
 
-void populacao_mutacao(Populacao* populacao, int mutacao);
+bool populacao_elitismo(Populacao* populacao);
+
+void populacao_mutacao(Populacao* populacao, double mutacao);
 
 bool populacao_predacao_sintese(Populacao* populacao);
 
-bool populacao_predacao_randomica(Populacao* populacao);
+bool populacao_predacao_randomica(Populacao* populacao, int n);
 
 void populacao_salvar(Populacao* populacao, char* melhor, char* todos);
 
