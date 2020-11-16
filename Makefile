@@ -10,10 +10,10 @@ FFLAGS    := $(LIBS) -O3 -march=native -w
 # Flags para compilar um programa para debug
 DFLAGS    := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address 
 # Flags que serao usadas para compilar
-FLAGS     := $(DFLAGS)
+FLAGS     := $(FFLAGS)
 
 # Outras Flags
-RMFLAG    := -f -v
+RMFLAGS   := -f -v
 
 ### Pasta dos .o
 BIN       := bin
@@ -46,10 +46,11 @@ all:
 	$(MAKE) compile
 
 clean:
-	rm $(BIN)/mapa/*.o $(RMFLAG)
-	rm $(BIN)/minmax/*.o $(RMFLAG)
-	rm $(BIN)/modulos/*.o $(RMFLAG)
-	rm $(BIN)/evolutivo/*.o $(RMFLAG)
+	rm $(BIN)/mapa/*.o $(RMFLAGS)
+	rm $(BIN)/minmax/*.o $(RMFLAGS)
+	rm $(BIN)/modulos/*.o $(RMFLAGS)
+	rm $(BIN)/evolutivo/*.o $(RMFLAGS)
+	rm *.out $(RMFLAG)
 
 # Rodar Programa
 run_jogo:

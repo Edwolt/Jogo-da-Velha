@@ -21,7 +21,7 @@ extern int tam_cromossomo;
 bool carregar_mapa(char* path);
 
 /**
- * Descarrega o mapa da memoria
+ * Desaloca o mapa da memoria
  */
 void free_mapa();
 

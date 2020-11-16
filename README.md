@@ -6,8 +6,9 @@ para isso use o comando:
 `make run_mapa`
 
 Depois é necessário calcular as jogadas que o computador fará
-para isso use o comando:
-`make run_minmax`
+para isso use o comando para calcular verificando todas as possibilidade:
+`make run_minmax`\
+ou use `make run_evolutivo` para calcular usando um algoritmo evolutivo
 
 Para poder rodar o jogo use o comando:
 `make run_jogo`
@@ -25,6 +26,9 @@ e eliminar jogos que não são simétricos
 Calcula jogadas verificando todas as possibilidade,
 esse algoritmo demora alguns segundos para executar.
 Depois de calcular as melhores jogadas salva em um arquivo
+
+# Evolutivo
+Calcula quais jogadas fazer usando um algoritmo evolutivo para isso
 
 # Jogo
 Um pequeno programa criado em python para exibir na tela um jogo da velha

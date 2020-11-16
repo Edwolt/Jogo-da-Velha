@@ -3,32 +3,32 @@
 static const int N = 19683;   // powi(3, 9); numero de arranjos possiveis de X e O
 static const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1 ; Numemro maximo de recursoes de jogo_possiveis()
 
-int simetrias[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
-                       {2, 1, 0, 5, 4, 3, 8, 7, 6},
-                       {2, 5, 8, 1, 4, 7, 0, 3, 6},
-                       {8, 5, 2, 7, 4, 1, 6, 3, 0},
-                       {8, 7, 6, 5, 4, 3, 2, 1, 0},
-                       {6, 7, 8, 3, 4, 5, 0, 1, 2},
-                       {6, 3, 0, 7, 4, 1, 8, 5, 2},
-                       {0, 3, 6, 1, 4, 7, 2, 5, 8}};
+byte simetrias[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
+                        {2, 1, 0, 5, 4, 3, 8, 7, 6},
+                        {2, 5, 8, 1, 4, 7, 0, 3, 6},
+                        {8, 5, 2, 7, 4, 1, 6, 3, 0},
+                        {8, 7, 6, 5, 4, 3, 2, 1, 0},
+                        {6, 7, 8, 3, 4, 5, 0, 1, 2},
+                        {6, 3, 0, 7, 4, 1, 8, 5, 2},
+                        {0, 3, 6, 1, 4, 7, 2, 5, 8}};
 
-int simetrias_reversa[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
-                               {2, 1, 0, 5, 4, 3, 8, 7, 6},
-                               {6, 3, 0, 7, 4, 1, 8, 5, 2},
-                               {8, 5, 2, 7, 4, 1, 6, 3, 0},
-                               {8, 7, 6, 5, 4, 3, 2, 1, 0},
-                               {6, 7, 8, 3, 4, 5, 0, 1, 2},
-                               {2, 5, 8, 1, 4, 7, 0, 3, 6},
-                               {0, 3, 6, 1, 4, 7, 2, 5, 8}};
+byte simetrias_reversa[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
+                                {2, 1, 0, 5, 4, 3, 8, 7, 6},
+                                {6, 3, 0, 7, 4, 1, 8, 5, 2},
+                                {8, 5, 2, 7, 4, 1, 6, 3, 0},
+                                {8, 7, 6, 5, 4, 3, 2, 1, 0},
+                                {6, 7, 8, 3, 4, 5, 0, 1, 2},
+                                {2, 5, 8, 1, 4, 7, 0, 3, 6},
+                                {0, 3, 6, 1, 4, 7, 2, 5, 8}};
 
-int vitorias[8][3] = {{0, 1, 2},
-                      {3, 4, 5},
-                      {6, 7, 8},
-                      {0, 3, 6},
-                      {1, 4, 7},
-                      {2, 5, 8},
-                      {0, 4, 8},
-                      {2, 4, 6}};
+byte vitorias[8][3] = {{0, 1, 2},
+                       {3, 4, 5},
+                       {6, 7, 8},
+                       {0, 3, 6},
+                       {1, 4, 7},
+                       {2, 5, 8},
+                       {0, 4, 8},
+                       {2, 4, 6}};
 
 int powi(int x, int n) {
     int y = 1;
@@ -47,24 +47,24 @@ int powi(int x, int n) {
  * 2: O jogador O ganhou
  * 3: deu velha
  */
-int calc_vencedor(int* jogo) {
+byte calc_vencedor(byte* jogo) {
     int i;
-    int a, b, c;
+    byte a, b, c;
     for (i = 0; i < 8; i++) {
         a = vitorias[i][0];
         b = vitorias[i][1];
         c = vitorias[i][2];
         if (jogo[a] != 0 && jogo[a] == jogo[b] && jogo[b] == jogo[c]) return jogo[a];
     }
-    bool zero = false;
+
     for (i = 0; i < 9; i++) {
-        if (jogo[i] == 0) zero = true;
+        if (jogo[i] == 0) return 0;
     }
 
-    return (zero ? 0 : 3);
+    return 3;
 }
 
-int calc_min(int* jogo) {
+int calc_min(byte* jogo) {
     int i, j;
     int minimo = 3 * N;  // Nao tem como dar um numero maior que N
     int numero;
@@ -77,7 +77,7 @@ int calc_min(int* jogo) {
     return minimo;
 }
 
-int calc_sim(int* jogo) {
+int calc_sim(byte* jogo) {
     int i, j;
     int minimo = 3 * N;  // Nao tem como dar um numero maior que N
     int sim = -1;
@@ -94,7 +94,7 @@ int calc_sim(int* jogo) {
     return sim;
 }
 
-int calc_val(int* jogo, int sim) {
+int calc_val(byte* jogo, int sim) {
     int j, numero = 0;
     for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[sim][j]] * powi(3, j);
     return numero;
@@ -105,8 +105,8 @@ int calc_val(int* jogo, int sim) {
  * n deve comecar valendo 1 e sera usado para armazenar dados no vetor
  * Retorna se a operacao foi possivel
  */
-static bool _jogos_possiveis(int** jogos, int* n, int atual, int vez) {
-    int i, j, k;
+static bool _jogos_possiveis(byte** jogos, int* n, int atual, int vez) {
+    int i, k;
     bool ok;
 
     for (i = 0; i < 9; i++) {
@@ -114,13 +114,12 @@ static bool _jogos_possiveis(int** jogos, int* n, int atual, int vez) {
         k = (*n)++;
 
         // Cria uma copia do jogo atual
-        jogos[k] = malloc(9 * sizeof(int));
+        jogos[k] = copiar_jogo(jogos[atual]);
         if (!jogos[k]) goto falha;
-        for (j = 0; j < 9; j++) jogos[k][j] = jogos[atual][j];
 
         // Faz jogada
         jogos[k][i] = vez;
-        if (venceu(jogos[k]) || cheio(jogos[k])) {
+        if (venceu_ou_velha(jogos[k])) {
             free(jogos[k]);
             jogos[k] = NULL;
             (*n)--;
@@ -137,18 +136,19 @@ falha:
     return false;
 }
 
-int** jogos_possiveis(int* n) {
-    int** jogos = NULL;
+byte** jogos_possiveis(int* n) {
+    byte** jogos = NULL;
     int i;
     bool ok;
 
     // Aloca array de jogos
-    jogos = malloc(M * sizeof(int*));
+    jogos = malloc(M * sizeof(byte*));
     if (!jogos) goto falha;
     for (i = 0; i < M; i++) jogos[i] = NULL;
 
     // Aloca primeiro jogo e inicializa com tudo 0
-    jogos[0] = malloc(9 * sizeof(int));
+    jogos[0] = malloc(9 * sizeof(byte));
+    if (!jogos[0]) goto falha;
     for (i = 0; i < 9; i++) jogos[0][i] = 0;
 
     // Chama a funcao auxiliar
@@ -167,11 +167,11 @@ falha:
     return NULL;
 }
 
-int* copiar_jogo(int* jogo) {
-    int* novo_jogo = NULL;
+byte* copiar_jogo(byte* jogo) {
+    byte* novo_jogo = NULL;
     int i;
 
-    novo_jogo = malloc(9 * sizeof(int));
+    novo_jogo = malloc(9 * sizeof(byte));
     if (!novo_jogo) return NULL;
 
     for (i = 0; i < 9; i++) novo_jogo[i] = jogo[i];

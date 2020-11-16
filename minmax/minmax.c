@@ -1,7 +1,7 @@
 #include "minimax.h"
 
-int minimax(int* jogo, int vez, int maximizador) {
-    int* jogo_aux = NULL;
+int minimax(byte* jogo, byte vez, byte maximizador) {
+    byte* jogo_aux = NULL;
 
     int i;
     int aux;
@@ -64,7 +64,7 @@ falha:
 /**
  * Calcula qual o proximo jogador a jogar
  */
-static int proximo_jogador(int* jogo) {
+static byte proximo_jogador(byte* jogo) {
     int i;
     int x = 0, o = 0;
     for (i = 0; i < 9; i++) {
@@ -77,11 +77,11 @@ static int proximo_jogador(int* jogo) {
     return (x == o ? 1 : 2);
 }
 
-int melhor_jogada(int* jogo) {
-    int* jogo_aux = NULL;
+int melhor_jogada(byte* jogo) {
+    byte* jogo_aux = NULL;
 
     int i;
-    int atual = proximo_jogador(jogo), proximo = trocar_vez(atual);
+    byte atual = proximo_jogador(jogo), proximo = trocar_vez(atual);
     int aux, melhor = -2, jogada = -2;
 
     for (i = 0; i < 9; i++) {
