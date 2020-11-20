@@ -264,7 +264,7 @@ bool populacao_predacao_sintese(Populacao* populacao) {
     int i, j;
     int freq[9];
     int maior;
-    int k = populacao->n - 1;
+    int k = populacao->n - 2;
     int fitness;
 
     sintese = individuo_criar();
