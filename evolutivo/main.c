@@ -21,8 +21,8 @@ int main() {
     srand(time(NULL));
     const int n = 200;
     const int predados = 2;
-    const int periodo_predacao = 10;
-    const double mutacao = 0.01;
+    const int periodo_predacao = 25;
+    const double mutacao = 0.02;
 
     Populacao* populacao = NULL;
     int i = 0;
@@ -40,7 +40,7 @@ int main() {
         if (!ok) goto falha;
         printf("Geracao %d, %d, %d\n", i++, populacao_get_fitness(populacao, 0), populacao_get_fitness(populacao, n - 1));
 
-        ok = populacao_predacao_sintese(populacao);
+        ok = populacao_predacao_sintese(populacao, predados);
         if (!ok) goto falha;
 
         if (i % periodo_predacao == 0) {

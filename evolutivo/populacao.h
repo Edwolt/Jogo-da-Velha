@@ -45,13 +45,12 @@ void populacao_mutacao(Populacao* populacao, double mutacao);
 /**
  * Gera uma nova por predacao por sintese
  * (individuo com os genes mais comuns na populacao)
- * e troca pelo pior de todos
+ * e troca pelo pior de todos exceto os n pior que eh da predacaoo radomica
  */
-bool populacao_predacao_sintese(Populacao* populacao);
+bool populacao_predacao_sintese(Populacao* populacao, int n);
 
 /**
- * Gera n novas solucoes trocando as piores solucoes
- * (Exceto o pior de todos que esperasse ser trocado pela predacao por sintese)
+ * Gera n novas solucoes aleatorias trocando as piores solucoes
  */
 bool populacao_predacao_randomica(Populacao* populacao, int n);
 

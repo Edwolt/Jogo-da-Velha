@@ -257,14 +257,14 @@ void populacao_mutacao(Populacao* populacao, double mutacao) {
 
 //* ===== Predacao ===== *//
 
-bool populacao_predacao_sintese(Populacao* populacao) {
+bool populacao_predacao_sintese(Populacao* populacao, int n) {
     if (!populacao) return false;
 
     Individuo* sintese = NULL;
     int i, j;
     int freq[9];
     int maior;
-    int k = populacao->n - 2;
+    int k = populacao->n - (n + 1);
     int fitness;
 
     sintese = individuo_criar();
@@ -299,7 +299,7 @@ bool populacao_predacao_randomica(Populacao* populacao, int n) {
 
     Individuo* novo = NULL;
     int i;
-    int k = populacao->n - 2;
+    int k = populacao->n - 1;
     int fitness;
 
     for (i = 0; i < n; i++) {
