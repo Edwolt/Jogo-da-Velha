@@ -13,7 +13,7 @@ para isso use o comando para calcular verificando todas as possibilidade:
 `make run_minmax`
 ou use `make run_evolutivo` para calcular usando um algoritmo evolutivo
 
-Para poder rodar o jogo use o comando:
+Para poder rodar o jogo use o comando (requer python3 e o modulo pygame):
 `make run_jogo`
 
 # Modulos
@@ -46,7 +46,7 @@ Calcula quais jogadas fazer usando um algoritmo evolutivo para isso
 
 # Jogo
 
-Um pequeno programa criado em python para exibir na tela um jogo da velha
+Um pequeno programa criado em python usando a biblioteca pygame para exibir na tela um jogo da velha
 e permitir que o usuário jogue contra a máquina
 
 ![Jogo da Velha](images/jogo_da_velha.png)
