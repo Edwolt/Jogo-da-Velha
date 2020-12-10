@@ -238,6 +238,87 @@ falha:
     return false;
 }
 
+inline static void swap_populacao(Populacao* populacao, int i, int j) {
+    Individuo* aux_pop = populacao->pop[i];
+    populacao->pop[i] = populacao->pop[j];
+    populacao->pop[j] = aux_pop;
+
+    int aux_fit = populacao->fitness[i];
+    populacao->fitness[i] = populacao->fitness[j];
+    populacao->fitness[j] = aux_fit;
+}
+
+static void _populacao_chave(Populacao* populacao, int n) {
+    if (!populacao) return;
+
+    if (n == 1) return;
+
+    int meio = n / 2;
+    int i;
+    int vitoria;
+
+    for (i = 0; i < meio; i++) {
+        vitoria = jogar(populacao->pop[i], populacao->pop[i + meio]);
+        vitoria -= jogar(populacao->pop[i + meio], populacao->pop[i]);
+        if (vitoria > 0) {
+            // Nao faz nada
+        } else if (vitoria < 0) {
+            swap_populacao(populacao, i, i + meio);
+        } else if (rand() % 2) {
+            swap_populacao(populacao, i, i + meio);
+        }
+    }
+
+    if (n % 2 == 1) {
+        vitoria = jogar(populacao->pop[0], populacao->pop[n - 1]);
+        vitoria -= jogar(populacao->pop[n - 1], populacao->pop[0]);
+        if (vitoria > 0) {
+            // Nao faz nada
+        } else if (vitoria < 0) {
+            swap_populacao(populacao, 0, n - 1);
+        } else if (rand() % 2) {
+            swap_populacao(populacao, 0, n - 1);
+        }
+    }
+
+    _populacao_chave(populacao, meio);
+}
+
+bool populacao_chave(Populacao* populacao) {
+    if (!populacao) return false;
+
+    Individuo** nova_pop = NULL;
+    int i;
+
+    nova_pop = malloc(populacao->n * sizeof(Individuo*));
+    for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
+    if (!nova_pop) goto falha;
+
+    _populacao_chave(populacao, populacao->n);
+
+    // Elitismo
+    nova_pop[0] = populacao->pop[0];
+
+    for (i = 1; i < populacao->n; i++) {
+        nova_pop[i] = crossover(nova_pop[0], populacao->pop[i]);
+        if (!nova_pop[i]) goto falha;
+    }
+
+    for (i = 1; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
+    free(populacao->pop);
+
+    populacao->pop = nova_pop;
+
+    return true;
+
+falha:
+    if (nova_pop) {
+        for (i = 0; i < populacao->n; i++) individuo_apagar(&nova_pop[i]);
+        free(nova_pop);
+    }
+    return false;
+}
+
 //* ===== Mutacao ===== *//
 
 void populacao_mutacao(Populacao* populacao, double mutacao) {

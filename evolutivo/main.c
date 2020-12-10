@@ -36,9 +36,11 @@ int main() {
 
     enable_raw_mode();
     while (!sair()) {
-        ok = populacao_fitness(populacao);
+        // ok = populacao_fitness(populacao);
+        // if (!ok) goto falha;
+        printf("Geracao %d\n", i++);
+        ok = populacao_chave(populacao);
         if (!ok) goto falha;
-        printf("Geracao %d, %d, %d\n", i++, populacao_get_fitness(populacao, 0), populacao_get_fitness(populacao, n - 1));
 
         ok = populacao_predacao_sintese(populacao, predados);
         if (!ok) goto falha;
@@ -48,7 +50,6 @@ int main() {
             if (!ok) goto falha;
         }
 
-        populacao_torneio(populacao);
         populacao_mutacao(populacao, mutacao);
     }
     disable_raw_mode();

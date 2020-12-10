@@ -36,6 +36,13 @@ bool populacao_fitness(Populacao* populacao);
 bool populacao_torneio(Populacao* populacao);
 
 /**
+ * Cria uma nova populacao usando um sistema de chaves
+ * onde quem ganhar disputa com os outros que ganhou
+ * ate descobri quem eh o melhor de todos
+ */
+bool populacao_chave(Populacao* populacao);
+
+/**
  * Aplica mutacao na populacao
  * Cada gene tem o valor do parametro mutacao de chance de sofrer mutacao
  * E garantido que pelo menos um gene de cada individuo sofrera mutacao
