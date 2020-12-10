@@ -19,8 +19,8 @@ static inline bool sair() {
  */
 int main() {
     srand(time(NULL));
-    const int n = 200;
-    const int predados = 2;
+    const int n = 500;
+    const int predados = 10;
     const int periodo_predacao = 25;
     const double mutacao = 0.02;
 
@@ -55,7 +55,7 @@ int main() {
     disable_raw_mode();
 
     populacao_fitness(populacao);
-    printf("\n%d geracoes processadas alcancando %d\n", i, populacao_get_fitness(populacao, 0));
+    printf("\n%d geracoes processadasd\n", i);
     populacao_salvar_melhor(populacao, "evolutivo.txt");
     populacao_apagar(&populacao);
 
