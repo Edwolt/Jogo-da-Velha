@@ -10,7 +10,7 @@ FFLAGS    := $(LIBS) -O3 -march=native -w
 # Flags para compilar um programa para debug
 DFLAGS    := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address 
 # Flags que serao usadas para compilar
-FLAGS     := $(FFLAGS)
+FLAGS     := $(DFLAGS)
 
 # Outras Flags
 RMFLAGS   := -f -v
@@ -50,7 +50,7 @@ clean:
 	rm $(BIN)/minmax/*.o $(RMFLAGS)
 	rm $(BIN)/modulos/*.o $(RMFLAGS)
 	rm $(BIN)/evolutivo/*.o $(RMFLAGS)
-	rm *.out $(RMFLAG)
+	rm *.out $(RMFLAGS)
 
 # Rodar Programa
 run_jogo:

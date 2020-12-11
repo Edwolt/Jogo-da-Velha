@@ -23,12 +23,9 @@ Populacao* populacao_criar(int n);
  */
 void populacao_apagar(Populacao** populacao);
 
-/**
- * Calcula fitness de cada individuo na populacao
- * Ordena as solucoes pelo valor do fitness
- * (serve para proteger o melhor de todos de mutacao e de fazer que as predacoes aconteca nos piores)
- */
-bool populacao_fitness(Populacao* populacao);
+void populacao_ordena(Populacao* populacao);
+
+bool populacao_elitismo(Populacao* populacao);
 
 /**
  * Cria uma nova populacao usando torneio de dois
@@ -66,10 +63,5 @@ bool populacao_predacao_randomica(Populacao* populacao, int n);
  * Retorna se a operacao foi possivel
  */
 void populacao_salvar_melhor(Populacao* populacao, char* path);
-
-/**
- * Retorna o fitness da individuo i
- */
-int populacao_get_fitness(Populacao* populacao, int i);
 
 #endif

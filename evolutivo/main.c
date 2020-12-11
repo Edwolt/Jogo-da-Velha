@@ -19,8 +19,8 @@ static inline bool sair() {
  */
 int main() {
     srand(time(NULL));
-    const int n = 500;
-    const int predados = 10;
+    const int n = 200;
+    const int predados = 2;
     const int periodo_predacao = 25;
     const double mutacao = 0.02;
 
@@ -36,10 +36,9 @@ int main() {
 
     enable_raw_mode();
     while (!sair()) {
-        // ok = populacao_fitness(populacao);
-        // if (!ok) goto falha;
         printf("Geracao %d\n", i++);
-        ok = populacao_chave(populacao);
+        populacao_ordena(populacao);
+        ok = populacao_elitismo(populacao);
         if (!ok) goto falha;
 
         ok = populacao_predacao_sintese(populacao, predados);
@@ -54,11 +53,11 @@ int main() {
     }
     disable_raw_mode();
 
-    populacao_fitness(populacao);
-    printf("\n%d geracoes processadasd\n", i);
+    populacao_ordena(populacao);
+
+    printf("\n%d geracoes processadas\n", i);
     populacao_salvar_melhor(populacao, "evolutivo.txt");
     populacao_apagar(&populacao);
-
     return EXIT_SUCCESS;
 
 falha:
