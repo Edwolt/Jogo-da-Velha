@@ -30,15 +30,7 @@ byte vitorias[8][3] = {{0, 1, 2},
                        {0, 4, 8},
                        {2, 4, 6}};
 
-int powi(int x, int n) {
-    int y = 1;
-    while (n > 0) {
-        if (n % 2 != 0) y *= x;
-        x *= x;
-        n /= 2;
-    }
-    return y;
-}
+//* ===== Calc ===== *//
 
 /**
  * Retorna quem venceu o jogo
@@ -114,6 +106,8 @@ int calc_val(byte* jogo, int sim) {
     for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[sim][j]] * powi(3, j);
     return numero;
 }
+
+//* ===== Jogo ===== *//
 
 /**
  * jogos deve comecar com o primeiro jogo com tudo 0

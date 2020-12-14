@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include "solucao.h"
+#include "individuo.h"
 #include "mapa.h"
 
 extern int tam_cromossomo;
@@ -12,11 +12,11 @@ extern int tam_cromossomo;
  * Armazena uma conjunto de solucoes,
  * onde cada solucao eh um individuo da populacao
  * 
- * Possui metodos de algoritmo evolutivo
+ * Possui metodos para ser populacao do algoritmo evolutivo
  */
 typedef struct Populacao Populacao;
 
-//* ===== Operacoes Basicas ===== *//
+//* ===== Criar e Apagar ===== *//
 
 /**
  * Cria um objeto populacao alocando ele na memoria
@@ -36,6 +36,10 @@ void populacao_ordena_fitness(Populacao* populacao);
 
 //* ===== Reproducao ===== *//
 
+/**
+ * Cria uma nova populacao usando elitismo de dois
+ * (considerando que o melhor de todos esta na posicao 0)
+ */
 bool populacao_elitismo(Populacao* populacao);
 
 /**
@@ -73,16 +77,14 @@ bool populacao_predacao_sintese(Populacao* populacao, int n);
  */
 bool populacao_predacao_randomica(Populacao* populacao, int n);
 
-//* ===== Outras operacoes ===== *//
+//* ===== Outros metodos ===== *//
 
 /**
- * Salva o melhor individuo no arquivo em path
- * Retorna se a operacao foi possivel
+ * Faz o calculo do fitness de cada individuo da populacao
  */
-void populacao_salvar_melhor(Populacao* populacao, char* path);
+void populacao_fitness(Populacao* populacao);
 
-Solucao* populacao_get_solucao(Populacao* populacao, int i);
-
-int* populacao_fitness(Populacao* populacao);
+//* ===== Getters e Setters =====*//
+Individuo* populacao_get_individuo(Populacao* populacao, int i);
 
 #endif

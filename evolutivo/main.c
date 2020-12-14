@@ -15,6 +15,14 @@ static inline bool sair() {
     return false;
 }
 
+static inline int populacao_get_fitness(Populacao* populacao, int i) {
+    return individuo_get_fitness(populacao_get_individuo(populacao, i));
+}
+
+static inline void populacao_salvar(Populacao* populacao, int i, char* path) {
+    solucao_salvar(individuo_get_solucao(populacao_get_individuo(populacao, i)), path);
+}
+
 /**
  * Calcula uma solucao usando algoritmo evolutivo
  * e salva em evolutivo.txt
@@ -29,6 +37,9 @@ int main() {
 
     Populacao* populacao = NULL;
     int geracao = -1;
+
+    int maior, menor, aux;
+    double desvio;  // Desvio padrao
     bool ok;
 
     ok = carregar_mapa("mapa.txt");
@@ -43,20 +54,19 @@ int main() {
 
         if (periodo_grafico != 0 && geracao % periodo_grafico == 0) {
             if (periodo_grafico > 0) {
-                int* fitness = populacao_fitness(populacao);
-                if (!fitness) goto quebra;
-                int maior = fitness[0];
-                int menor = fitness[0];
-                double desvio = 0;
+                populacao_fitness(populacao);
+                aux = populacao_get_fitness(populacao, 0);
+                maior = menor = aux;
+                desvio = 0;
                 for (int i = 0; i < n; i++) {
-                    maior = max(maior, fitness[i]);
-                    menor = min(menor, fitness[i]);
-                    desvio += fitness[i] * fitness[i];
+                    aux = populacao_get_fitness(populacao, 0);
+                    maior = max(maior, aux);
+                    menor = min(menor, aux);
+                    desvio += aux * aux;
                 }
                 desvio = sqrt(desvio / n);
                 printf("Geracao %d: %3d %3d %3.3f\n", geracao, maior, menor, desvio);
             } else {
-            quebra:
                 printf("Geracao %d\n", geracao);
             }
         }
@@ -65,32 +75,26 @@ int main() {
         ok = populacao_chave(populacao);
         if (!ok) goto falha;
 
-        // ok = populacao_predacao_sintese(populacao, predados);
-        // if (!ok) goto falha;
+        ok = populacao_predacao_sintese(populacao, predados);
+        if (!ok) goto falha;
 
-        // if (periodo_predacao != 0 && geracao % periodo_predacao == 0) {
-        //     ok = populacao_predacao_randomica(populacao, predados);
-        //     if (!ok) goto falha;
-        // }
+        if (periodo_predacao != 0 && geracao % periodo_predacao == 0) {
+            ok = populacao_predacao_randomica(populacao, predados);
+            if (!ok) goto falha;
+        }
 
         populacao_mutacao(populacao, mutacao);
     }
     disable_raw_mode();
 
     int melhor = 0;
-    int* fitness = populacao_fitness(populacao);
 
-    if (fitness) {
-        for (int i = 0; i < n; i++) {
-            if (fitness[i] > fitness[melhor]) melhor = i;
-        }
-        printf("\n%d geracoes processadas com %d\n", geracao, fitness[melhor]);
-    } else {
-        printf("\n%d geracoes processadas\n", geracao);
-    }
-    solucao_salvar(populacao_get_solucao(populacao, melhor), "evolutivo.txt");
+    populacao_ordena_fitness(populacao);
+    printf("\n%d geracoes processadas com %d\n", geracao, populacao_get_fitness(populacao, melhor));
+    // printf("\n%d geracoes processadas\n", geracao);
+
+    populacao_salvar(populacao, melhor, "evolutivo.txt");
     populacao_apagar(&populacao);
-    free(fitness);
     return EXIT_SUCCESS;
 
 falha:

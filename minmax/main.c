@@ -32,7 +32,7 @@ int main() {
     if (!solucao) goto falha;
 
     for (i = 0; i < n; i++) {
-        solucao_set(solucao, jogos[i], melhor_jogada(jogos[i]));
+        solucao_set_jogada(solucao, jogos[i], melhor_jogada(jogos[i]));
     }
 
     ok = solucao_salvar(solucao, "minmax.txt");

@@ -6,11 +6,6 @@
 
 typedef signed char byte;
 
-inline static int min(int a, int b) { return (a < b ? a : b); }
-inline static int max(int a, int b) { return (a > b ? a : b); }
-// inline static int abs(int a) { return (a > 0 ? a : -a); }
-inline static byte trocar_vez(byte vez) { return (vez == 1 ? 2 : 1); }
-
 /**
  * jogada -> jogada'
  * Pega uma jogada e retorna onde ela seria naquela simtria
@@ -29,10 +24,27 @@ extern byte simetrias_reversa[8][9];
  */
 extern byte vitorias[8][3];
 
+//* ===== Inline ===== *//
+
 /**
  * Retorna x elevado n
  */
-int powi(int x, int n);
+inline static int powi(int x, int n) {
+    int y = 1;
+    while (n > 0) {
+        if (n % 2 != 0) y *= x;
+        x *= x;
+        n /= 2;
+    }
+    return y;
+}
+
+inline static int min(int a, int b) { return (a < b ? a : b); }
+inline static int max(int a, int b) { return (a > b ? a : b); }
+// inline static int abs(int a) { return (a > 0 ? a : -a); }
+inline static byte trocar_vez(byte vez) { return (vez == 1 ? 2 : 1); }
+
+//* ===== Calc ===== *//
 
 /**
  * Retorna quem venceu o jogo
@@ -79,6 +91,8 @@ int calc_sim(byte* jogo);
  * Retorna o valor so jogo na simetria sim
  */
 int calc_val(byte* jogo, int sim);
+
+//* ===== Jogo ===== *//
 
 /**
  * Retorna em jogos uma lista de todos os jogos possiveis de acontecer
