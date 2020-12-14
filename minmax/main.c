@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
-#include "individuo.h"
+#include "solucao.h"
 #include "mapa.h"
 #include "minimax.h"
 #include "util.h"
@@ -11,12 +11,12 @@ static const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*
 extern byte vitorias[8][3];
 
 /**
- * Calcula um individuo testando todas as opcoes possiveis de jogo
+ * Calcula uma solucao testando todas as opcoes possiveis de jogo
  * e salva em minmax.txt
  */
 int main() {
     byte** jogos = NULL;
-    Individuo* individuo = NULL;
+    Solucao* solucao = NULL;
 
     int i;
     int n;
@@ -28,25 +28,25 @@ int main() {
     jogos = jogos_possiveis(&n);
     if (!jogos) goto falha;
 
-    individuo = individuo_criar();
-    if (!individuo) goto falha;
+    solucao = solucao_criar();
+    if (!solucao) goto falha;
 
     for (i = 0; i < n; i++) {
-        individuo_set(individuo, jogos[i], melhor_jogada(jogos[i]));
+        solucao_set(solucao, jogos[i], melhor_jogada(jogos[i]));
     }
 
-    ok = individuo_salvar(individuo, "minmax.txt");
+    ok = solucao_salvar(solucao, "minmax.txt");
     if (!ok) goto falha;
     printf("Solucao salva em minmax.txt\n");
 
-    individuo_apagar(&individuo);
+    solucao_apagar(&solucao);
     for (i = 0; i < M; i++) free(jogos[i]);
     free(jogos);
     free_mapa();
 
     return EXIT_SUCCESS;
 falha:
-    individuo_apagar(&individuo);
+    solucao_apagar(&solucao);
     if (jogos) {
         for (i = 0; i < M; i++) free(jogos[i]);
         free(jogos);

@@ -3,13 +3,16 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include "individuo.h"
+#include "solucao.h"
 #include "mapa.h"
 
 extern int tam_cromossomo;
 
 /**
- * Armazena uma conjunto de individuos
+ * Armazena uma conjunto de solucoes,
+ * onde cada solucao eh um individuo da populacao
+ * 
+ * Possui metodos de algoritmo evolutivo
  */
 typedef struct Populacao Populacao;
 
@@ -78,7 +81,7 @@ bool populacao_predacao_randomica(Populacao* populacao, int n);
  */
 void populacao_salvar_melhor(Populacao* populacao, char* path);
 
-Individuo* populacao_get_individuo(Populacao* populacao, int i);
+Solucao* populacao_get_solucao(Populacao* populacao, int i);
 
 int* populacao_fitness(Populacao* populacao);
 

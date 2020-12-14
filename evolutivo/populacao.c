@@ -2,7 +2,7 @@
 
 struct Populacao {
     int n;
-    Individuo** pop;
+    Solucao** pop;
 };
 
 //* ===== Operacoes Basicas ===== *//
@@ -15,12 +15,12 @@ Populacao* populacao_criar(int n) {
     populacao->pop = NULL;
     populacao->n = n;
 
-    populacao->pop = malloc(populacao->n * sizeof(Individuo*));
+    populacao->pop = malloc(populacao->n * sizeof(Solucao*));
     if (!populacao->pop) goto falha;
     for (i = 0; i < populacao->n; i++) populacao->pop[i] = NULL;
 
     for (i = 0; i < populacao->n; i++) {
-        populacao->pop[i] = individuo_criar_random();
+        populacao->pop[i] = solucao_criar_random();
         if (!populacao->pop[i]) goto falha;
     }
 
@@ -36,7 +36,7 @@ void populacao_apagar(Populacao** populacao) {
 
     int i;
     if ((*populacao)->pop) {
-        for (i = 0; i < (*populacao)->n; i++) individuo_apagar(&(*populacao)->pop[i]);
+        for (i = 0; i < (*populacao)->n; i++) solucao_apagar(&(*populacao)->pop[i]);
         free((*populacao)->pop);
     }
     free(*populacao);
@@ -44,7 +44,7 @@ void populacao_apagar(Populacao** populacao) {
 }
 
 //* ===== Ordena ===== *//
-static int _jogar(Individuo* a, Individuo* b) {
+static int _jogar(Solucao* a, Solucao* b) {
     if (!a || !b) return 0;
 
     byte jogo[9];
@@ -56,10 +56,10 @@ static int _jogar(Individuo* a, Individuo* b) {
     for (i = 0; i < 9; i++) jogo[i] = 0;
 
     do {
-        jogada = individuo_get((vez == 1 ? a : b), jogo);
+        jogada = solucao_get((vez == 1 ? a : b), jogo);
         if (jogo[jogada] != 0) {  // jogada_invalida
             while (jogo[jogada] != 0) jogada = rand() % 9;
-            individuo_set((vez == 1 ? a : b), jogo, jogada);
+            solucao_set((vez == 1 ? a : b), jogo, jogada);
         }
 
         jogo[jogada] = vez;
@@ -73,7 +73,7 @@ static int _jogar(Individuo* a, Individuo* b) {
     return 0;
 }
 
-inline static int jogar(Individuo* a, Individuo* b) { return _jogar(a, b) - _jogar(b, a); }
+inline static int jogar(Solucao* a, Solucao* b) { return _jogar(a, b) - _jogar(b, a); }
 
 inline static void swap(int* a, int* b) {
     int aux = *a;
@@ -81,8 +81,8 @@ inline static void swap(int* a, int* b) {
     *b = aux;
 }
 
-inline static void swapI(Individuo** a, Individuo** b) {
-    Individuo* aux = *a;
+inline static void swapS(Solucao** a, Solucao** b) {
+    Solucao* aux = *a;
     *a = *b;
     *b = aux;
 }
@@ -94,7 +94,7 @@ void populacao_ordena(Populacao* populacao) {
     for (i = populacao->n - 1; i > 0; i--) {
         for (j = 0; j < i; j++) {
             if (jogar(populacao->pop[j], populacao->pop[j + 1]) < 0) {
-                swapI(&populacao->pop[j], &populacao->pop[j + 1]);
+                swapS(&populacao->pop[j], &populacao->pop[j + 1]);
             }
         }
     }
@@ -110,7 +110,7 @@ void populacao_ordena_chave(Populacao* populacao) {
         if (n % 2 == 1) {
             vitoria = jogar(populacao->pop[n - 2], populacao->pop[n - 1]);
             if (vitoria < 0 || (vitoria == 0 && rand() % 2)) {
-                swapI(&populacao->pop[n - 2], &populacao->pop[n - 1]);
+                swapS(&populacao->pop[n - 2], &populacao->pop[n - 1]);
             }
         }
 
@@ -118,7 +118,7 @@ void populacao_ordena_chave(Populacao* populacao) {
         for (i = 0; i < meio; i++) {
             vitoria = jogar(populacao->pop[i], populacao->pop[i + meio]);
             if (vitoria < 0 || (vitoria == 0 && rand() % 2)) {
-                swapI(&populacao->pop[i], &populacao->pop[i + meio]);
+                swapS(&populacao->pop[i], &populacao->pop[i + meio]);
             }
         }
     }
@@ -136,7 +136,7 @@ void populacao_ordena_fitness(Populacao* populacao) {
         for (j = 0; j < i; j++) {
             if (fitness[j] < fitness[j + 1]) {
                 swap(&fitness[j], &fitness[j + 1]);
-                swapI(&populacao->pop[j], &populacao->pop[j + 1]);
+                swapS(&populacao->pop[j], &populacao->pop[j + 1]);
             }
         }
     }
@@ -145,17 +145,17 @@ void populacao_ordena_fitness(Populacao* populacao) {
 
 //* ===== Reproducao ===== *//
 
-static Individuo* crossover(Individuo* pai, Individuo* mae) {
+static Solucao* crossover(Solucao* pai, Solucao* mae) {
     if (!pai | !mae) return NULL;
 
-    Individuo* filho = NULL;
+    Solucao* filho = NULL;
     int i;
 
-    filho = individuo_criar();
+    filho = solucao_criar();
     if (!filho) return NULL;
 
     for (i = 0; i < tam_cromossomo; i++) {
-        individuo_gene_set(filho, i, individuo_gene_get((rand() % 2 ? pai : mae), i));
+        solucao_gene_set(filho, i, solucao_gene_get((rand() % 2 ? pai : mae), i));
     }
 
     return filho;
@@ -164,10 +164,10 @@ static Individuo* crossover(Individuo* pai, Individuo* mae) {
 bool populacao_elitismo(Populacao* populacao) {
     if (!populacao) return false;
 
-    Individuo** nova_pop = NULL;
+    Solucao** nova_pop = NULL;
     int i;
 
-    nova_pop = malloc(populacao->n * sizeof(Individuo*));
+    nova_pop = malloc(populacao->n * sizeof(Solucao*));
     if (!nova_pop) goto falha;
     for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
 
@@ -179,7 +179,7 @@ bool populacao_elitismo(Populacao* populacao) {
         if (!nova_pop[i]) goto falha;
     }
 
-    for (i = 0; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
+    for (i = 0; i < populacao->n; i++) solucao_apagar(&populacao->pop[i]);
     free(populacao->pop);
     populacao->pop = nova_pop;
 
@@ -187,7 +187,7 @@ bool populacao_elitismo(Populacao* populacao) {
 
 falha:
     if (nova_pop) {
-        for (i = 0; i < populacao->n; i++) individuo_apagar(&nova_pop[i]);
+        for (i = 0; i < populacao->n; i++) solucao_apagar(&nova_pop[i]);
         free(nova_pop);
     }
     return false;
@@ -196,12 +196,12 @@ falha:
 bool populacao_torneio(Populacao* populacao) {
     if (!populacao) return false;
 
-    Individuo** nova_pop = NULL;
+    Solucao** nova_pop = NULL;
     int i;
     int a, b;
     int pai, mae;
 
-    nova_pop = malloc(populacao->n * sizeof(Individuo*));
+    nova_pop = malloc(populacao->n * sizeof(Solucao*));
     if (!nova_pop) goto falha;
     for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
 
@@ -221,7 +221,7 @@ bool populacao_torneio(Populacao* populacao) {
         if (!nova_pop[i]) goto falha;
     }
 
-    for (i = 0; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
+    for (i = 0; i < populacao->n; i++) solucao_apagar(&populacao->pop[i]);
     free(populacao->pop);
     populacao->pop = nova_pop;
 
@@ -229,7 +229,7 @@ bool populacao_torneio(Populacao* populacao) {
 
 falha:
     if (nova_pop) {
-        for (i = 0; i < populacao->n; i++) individuo_apagar(&nova_pop[i]);
+        for (i = 0; i < populacao->n; i++) solucao_apagar(&nova_pop[i]);
         free(nova_pop);
     }
     return false;
@@ -238,11 +238,11 @@ falha:
 bool populacao_chave(Populacao* populacao) {
     if (!populacao) return false;
 
-    Individuo** nova_pop = NULL;
+    Solucao** nova_pop = NULL;
     int i, n, meio;
     int vitoria;
 
-    nova_pop = malloc(populacao->n * sizeof(Individuo*));
+    nova_pop = malloc(populacao->n * sizeof(Solucao*));
     for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
     if (!nova_pop) goto falha;
 
@@ -250,7 +250,7 @@ bool populacao_chave(Populacao* populacao) {
         if (n % 2 == 1) {
             vitoria = jogar(populacao->pop[0], populacao->pop[n - 1]);
             if (vitoria < 0 || (vitoria == 0 && rand() % 2)) {
-                swapI(&populacao->pop[0], &populacao->pop[n - 1]);
+                swapS(&populacao->pop[0], &populacao->pop[n - 1]);
             }
             nova_pop[n - 1] = crossover(populacao->pop[0], populacao->pop[n - 1]);
             if (!nova_pop[n - 1]) goto falha;
@@ -260,7 +260,7 @@ bool populacao_chave(Populacao* populacao) {
         for (i = 0; i < meio; i++) {
             vitoria = jogar(populacao->pop[i], populacao->pop[i + meio]);
             if (vitoria < 0 || (vitoria == 0 && rand() % 2)) {
-                swapI(&populacao->pop[i], &populacao->pop[i + meio]);
+                swapS(&populacao->pop[i], &populacao->pop[i + meio]);
             }
             nova_pop[i + meio] = crossover(populacao->pop[i], populacao->pop[i + meio]);
             if (!nova_pop[i + meio]) goto falha;
@@ -270,7 +270,7 @@ bool populacao_chave(Populacao* populacao) {
     nova_pop[0] = crossover(populacao->pop[0], populacao->pop[0]);
     if (!nova_pop[0]) goto falha;
 
-    for (i = 0; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
+    for (i = 0; i < populacao->n; i++) solucao_apagar(&populacao->pop[i]);
     free(populacao->pop);
 
     populacao->pop = nova_pop;
@@ -279,7 +279,7 @@ bool populacao_chave(Populacao* populacao) {
 
 falha:
     if (nova_pop) {
-        for (i = 0; i < populacao->n; i++) individuo_apagar(&nova_pop[i]);
+        for (i = 0; i < populacao->n; i++) solucao_apagar(&nova_pop[i]);
         free(nova_pop);
     }
     return false;
@@ -293,10 +293,10 @@ void populacao_mutacao(Populacao* populacao, double mutacao) {
     int i, j;
 
     for (i = 1; i < populacao->n; i++) {
-        individuo_gene_set(populacao->pop[i], rand() % tam_cromossomo, rand() % 9);  // Certificando que houve mutacao
+        solucao_gene_set(populacao->pop[i], rand() % tam_cromossomo, rand() % 9);  // Certificando que houve mutacao
         for (j = 0; j < tam_cromossomo; j++) {
             if (rand() < RAND_MAX * mutacao) {
-                individuo_gene_set(populacao->pop[i], j, rand() % 9);
+                solucao_gene_set(populacao->pop[i], j, rand() % 9);
             }
         }
     }
@@ -307,20 +307,20 @@ void populacao_mutacao(Populacao* populacao, double mutacao) {
 bool populacao_predacao_sintese(Populacao* populacao, int n) {
     if (!populacao) return false;
 
-    Individuo* sintese = NULL;
+    Solucao* sintese = NULL;
     int i, j;
     int freq[9];
     int maior;
     int k = populacao->n - (n + 1);
 
-    sintese = individuo_criar();
+    sintese = solucao_criar();
     if (!sintese) return false;
 
     for (i = 0; i < tam_cromossomo; i++) {
         for (j = 0; j < 9; j++) freq[j] = 0;
 
         for (j = 0; j < populacao->n; j++) {
-            freq[individuo_gene_get(populacao->pop[j], i)]++;
+            freq[solucao_gene_get(populacao->pop[j], i)]++;
         }
 
         maior = 0;
@@ -329,10 +329,10 @@ bool populacao_predacao_sintese(Populacao* populacao, int n) {
                 maior = j;
             }
         }
-        individuo_gene_set(sintese, i, maior);
+        solucao_gene_set(sintese, i, maior);
     }
 
-    individuo_apagar(&populacao->pop[k]);
+    solucao_apagar(&populacao->pop[k]);
     populacao->pop[k] = sintese;
 
     return true;
@@ -341,15 +341,15 @@ bool populacao_predacao_sintese(Populacao* populacao, int n) {
 bool populacao_predacao_randomica(Populacao* populacao, int n) {
     if (!populacao) return false;
 
-    Individuo* novo = NULL;
+    Solucao* novo = NULL;
     int i;
     int k = populacao->n - 1;
 
     for (i = 0; i < n; i++) {
-        novo = individuo_criar_random();
+        novo = solucao_criar_random();
         if (!novo) goto falha;
 
-        individuo_apagar(&populacao->pop[k - i]);
+        solucao_apagar(&populacao->pop[k - i]);
         populacao->pop[k - i] = novo;
     }
     return true;
@@ -361,11 +361,9 @@ falha:
 
 //* ===== Outras operacoes ===== *//
 
-void populacao_salvar_melhor(Populacao* populacao, char* path) {
-    individuo_salvar(populacao->pop[0], path);
-}
+void populacao_salvar_melhor(Populacao* populacao, char* path) { solucao_salvar(populacao->pop[0], path); }
 
-Individuo* populacao_get_individuo(Populacao* populacao, int i) { return (populacao ? populacao->pop[i] : NULL); }
+Solucao* populacao_get_solucao(Populacao* populacao, int i) { return (populacao ? populacao->pop[i] : NULL); }
 
 int* populacao_fitness(Populacao* populacao) {
     if (!populacao) return NULL;
