@@ -8,6 +8,7 @@ typedef signed char byte;
 
 inline static int min(int a, int b) { return (a < b ? a : b); }
 inline static int max(int a, int b) { return (a > b ? a : b); }
+// inline static int abs(int a) { return (a > 0 ? a : -a); }
 inline static byte trocar_vez(byte vez) { return (vez == 1 ? 2 : 1); }
 
 /**

@@ -2,7 +2,7 @@
 CC        := gcc
 
 ### Flags de Compilacao
-LIBS      :=   # Bibliotecas usadas
+LIBS      := -lm  # Bibliotecas usadas
 # Flags para compilar
 CFLAGS    := $(LIBS) 
 # Flags para compilar um programa otimizado

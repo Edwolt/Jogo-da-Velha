@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>  // malloc, rand
 #include <time.h>
 #include "kbhit.h"
@@ -19,13 +20,14 @@ static inline bool sair() {
  */
 int main() {
     srand(time(NULL));
-    const int n = 200;
-    const int predados = 2;
+    const int n = 4096;
+    const int predados = 1;
     const int periodo_predacao = 25;
+    const int periodo_grafico = -100;
     const double mutacao = 0.02;
 
     Populacao* populacao = NULL;
-    int i = 0;
+    int geracao = -1;
     bool ok;
 
     ok = carregar_mapa("mapa.txt");
@@ -36,27 +38,57 @@ int main() {
 
     enable_raw_mode();
     while (!sair()) {
-        printf("Geracao %d\n", i++);
-        populacao_ordena(populacao);
-        ok = populacao_elitismo(populacao);
-        if (!ok) goto falha;
+        geracao++;
 
-        ok = populacao_predacao_sintese(populacao, predados);
-        if (!ok) goto falha;
-
-        if (i % periodo_predacao == 0) {
-            ok = populacao_predacao_randomica(populacao, predados);
-            if (!ok) goto falha;
+        if (periodo_grafico != 0 && geracao % periodo_grafico == 0) {
+            if (periodo_grafico > 0) {
+                int* fitness = populacao_fitness(populacao);
+                if (!fitness) goto quebra1;
+                int maior = fitness[0];
+                int menor = fitness[0];
+                double desvio = 0;
+                for (int i = 0; i < n; i++) {
+                    maior = max(maior, fitness[i]);
+                    menor = min(menor, fitness[i]);
+                    desvio += fitness[i] * fitness[i];
+                }
+                desvio = sqrt(desvio / n);
+                printf("Geracao %d: %3d %3d %3.3f\n", geracao, maior, menor, desvio);
+            } else {
+            quebra1:
+                printf("Geracao %d\n", geracao);
+            }
         }
 
+        // populacao_ordena_fitness(populacao);
+        ok = populacao_chave(populacao);
+        if (!ok) goto falha;
+
+        // ok = populacao_predacao_sintese(populacao, predados);
+        // if (!ok) goto falha;
+
+        // if (periodo_predacao != 0 && geracao % periodo_predacao == 0) {
+        //     ok = populacao_predacao_randomica(populacao, predados);
+        //     if (!ok) goto falha;
+        // }
+
         populacao_mutacao(populacao, mutacao);
+        break;
     }
     disable_raw_mode();
 
-    populacao_ordena(populacao);
+    int melhor = 0;
+    int* fitness = populacao_fitness(populacao);
 
-    printf("\n%d geracoes processadas\n", i);
-    populacao_salvar_melhor(populacao, "evolutivo.txt");
+    if (!fitness) goto quebra2;
+    for (int i = 0; i < n; i++) {
+        if (fitness[i] > fitness[melhor]) melhor = i;
+    }
+quebra2:
+    printf("\n%d geracoes processadas com %d\n", geracao, fitness[melhor]);
+
+    printf("\n%d geracoes processadas com %d\n", geracao);
+    individuo_salvar(populacao_get_individuo(populacao, melhor), "evolutivo.txt");
     populacao_apagar(&populacao);
     return EXIT_SUCCESS;
 
