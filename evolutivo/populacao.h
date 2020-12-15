@@ -14,7 +14,10 @@ extern int tam_cromossomo;
  * 
  * Possui metodos para ser populacao do algoritmo evolutivo
  */
-typedef struct Populacao Populacao;
+typedef struct Populacao {
+    int n;
+    Individuo** pop;
+} Populacao;
 
 //* ===== Criar e Apagar ===== *//
 
@@ -71,9 +74,5 @@ bool populacao_predacao_sintese(Populacao* populacao, int n);
  * Gera n novas solucoes aleatorias trocando as piores solucoes
  */
 bool populacao_predacao_randomica(Populacao* populacao, int n);
-
-//* ===== Getters e Setters =====*//
-
-Individuo* populacao_get_individuo(Populacao* populacao, int i);
 
 #endif

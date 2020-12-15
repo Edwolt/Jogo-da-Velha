@@ -8,14 +8,16 @@
 extern byte simetrias[8][9];
 extern byte simetrias_reversa[8][9];
 
+extern int* mapa;
+extern int tam_cromossomo;
+
 /**
  * Armazena uma possivel solucao para o jogo da velha
  * Usa o mapa para mapear os possiveis jogos dentro do jogo
  */
-typedef struct Solucao Solucao;
-
-extern int* mapa;
-extern int tam_cromossomo;
+typedef struct Solucao {
+    byte* cromossomo;
+} Solucao;
 
 //* ===== Criar e Apagar =====*//
 
@@ -42,6 +44,11 @@ void solucao_apagar(Solucao** Solucao);
  */
 bool solucao_salvar(Solucao* solucao, char* path);
 
+/**
+ * Corrige a solucao para que ela nao faca jogadas invalidas
+ */
+bool solucao_correcao(Solucao* solucao);
+
 //* ===== Getters e Setters =====*//
 
 /**
@@ -55,15 +62,5 @@ byte solucao_get_jogada(Solucao* solucao, byte* jogo);
  * deve ser feito a essa jogada
  */
 void solucao_set_jogada(Solucao* solucao, byte* jogo, byte jogada);
-
-/**
- * Retorna o valor que esta no gene i
- */
-byte solucao_get_gene(Solucao* solucao, int i);
-
-/**
- * O valor do gene i passa a valer val
- */
-void solucao_set_gene(Solucao* solucao, int i, byte val);
 
 #endif

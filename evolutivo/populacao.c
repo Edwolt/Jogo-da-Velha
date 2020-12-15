@@ -1,10 +1,5 @@
 #include "populacao.h"
 
-struct Populacao {
-    int n;
-    Individuo** pop;
-};
-
 //* ===== Criar e Apagar ===== *//
 
 Populacao* populacao_criar(int n) {
@@ -57,20 +52,18 @@ void populacao_ordena_elo(Populacao* populacao) {
 
     // Shell Sort
     int i, j, gap = 1;
-    int aux_fit;
-    Individuo* aux_ind;
+    Individuo* aux;
     while (gap < populacao->n) gap = 3 * gap + 1;
     while (gap > 0) {  // Para cada gap
         for (i = gap; i < populacao->n; i++) {
             // Insertion Sort de i no grupo i % gap
-            aux_fit = individuo_get_elo(populacao->pop[i]);
-            aux_ind = populacao->pop[i];
+            aux = populacao->pop[i];
             j = i;
-            for (j = i; j >= gap && aux_fit > individuo_get_elo(populacao->pop[j - gap]); j -= gap) {
+            for (j = i; j >= gap && aux->elo > populacao->pop[j - gap]->elo; j -= gap) {
                 // Estou segurando o pop[i] e deslocando os valores para frente ate achar onde encaixar pop[i]
                 populacao->pop[j] = populacao->pop[j - gap];
             }
-            populacao->pop[j] = aux_ind;
+            populacao->pop[j] = aux;
         }
         gap /= 3;
     }
@@ -91,9 +84,9 @@ static void competir_elo(Populacao* populacao, int n) {
 
 static void ajusta_elo(Populacao* populacao) {
     int i;
-    double ajuste = individuo_get_elo(populacao->pop[populacao->n - 1]);
+    double ajuste = populacao->pop[populacao->n - 1]->elo;
     for (i = 0; i < populacao->n; i++) {
-        individuo_set_elo(populacao->pop[i], individuo_get_elo(populacao->pop[i]) - ajuste);
+        populacao->pop[i]->elo -= ajuste;
     }
 }
 
@@ -156,11 +149,11 @@ bool populacao_torneio_elo(Populacao* populacao, int n) {
     for (i = 1; i < populacao->n; i++) {
         a = rand() % populacao->n;
         b = rand() % populacao->n;
-        pai = (individuo_get_elo(populacao->pop[a]) > individuo_get_elo(populacao->pop[b]) ? a : b);
+        pai = (populacao->pop[a]->elo > populacao->pop[b]->elo ? a : b);
 
         a = rand() % populacao->n;
         b = rand() % populacao->n;
-        mae = (individuo_get_elo(populacao->pop[a]) > individuo_get_elo(populacao->pop[b]) ? a : b);
+        mae = (populacao->pop[a]->elo > populacao->pop[b]->elo ? a : b);
 
         nova_pop[i] = individuo_crossover(populacao->pop[pai], populacao->pop[mae]);
         if (!nova_pop[i]) goto falha;
@@ -209,7 +202,7 @@ bool populacao_predacao_sintese(Populacao* populacao, int n) {
         for (j = 0; j < 9; j++) freq[j] = 0;
 
         for (j = 0; j < populacao->n; j++) {
-            freq[individuo_get_gene(populacao->pop[j], i)]++;
+            freq[populacao->pop[j]->sol->cromossomo[i]]++;
         }
 
         maior = 0;
@@ -218,7 +211,7 @@ bool populacao_predacao_sintese(Populacao* populacao, int n) {
                 maior = j;
             }
         }
-        individuo_set_gene(sintese, i, maior);
+        sintese->sol->cromossomo[i] = maior;
     }
 
     individuo_apagar(&populacao->pop[k]);

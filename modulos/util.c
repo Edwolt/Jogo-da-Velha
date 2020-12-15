@@ -1,6 +1,6 @@
 #include "util.h"
 
-static const int N = 19683;   // powi(3, 9); numero de arranjos possiveis de X e O
+static const int N = 19683;   // pow(3, 9); numero de arranjos possiveis de X e O
 static const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1 ; Numemro maximo de recursoes de jogo_possiveis()
 
 byte simetrias[8][9] = {{0, 1, 2, 3, 4, 5, 6, 7, 8},
@@ -29,6 +29,8 @@ byte vitorias[8][3] = {{0, 1, 2},
                        {2, 5, 8},
                        {0, 4, 8},
                        {2, 4, 6}};
+
+int pow3[10] = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683};
 
 //* ===== Calc ===== *//
 
@@ -74,7 +76,7 @@ e para isso usamos simtreias_reversa
 int calc_jogo(byte* jogo) {
     int i;
     register int numero = 0;
-    for (i = 0; i < 9; i++) numero += jogo[i] * powi(3, i);
+    for (i = 0; i < 9; i++) numero += jogo[i] * pow3[i];
     return numero;
 }
 
@@ -85,7 +87,7 @@ int calc_min(byte* jogo) {
 
     for (i = 0; i < 8; i++) {
         numero = 0;
-        for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[i][j]] * powi(3, j);
+        for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[i][j]] * pow3[j];
         minimo = min(numero, minimo);
     }
     return minimo;
@@ -99,7 +101,7 @@ int calc_sim(byte* jogo) {
 
     for (i = 0; i < 8; i++) {
         numero = 0;
-        for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[i][j]] * powi(3, j);
+        for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[i][j]] * pow3[j];
         if (numero < minimo) {
             minimo = numero;
             sim = i;
@@ -111,7 +113,7 @@ int calc_sim(byte* jogo) {
 int calc_val(byte* jogo, int sim) {
     int j;
     register int numero = 0;
-    for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[sim][j]] * powi(3, j);
+    for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[sim][j]] * pow3[j];
     return numero;
 }
 

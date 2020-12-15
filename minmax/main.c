@@ -5,7 +5,7 @@
 #include "minimax.h"
 #include "util.h"
 
-// static const int N = 19683;   // powi(3, 9); numero de arranjos possiveis de X e O
+// static const int N = 19683;   // pow(3, 9); numero de arranjos possiveis de X e O
 static const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1, Numemro maximo de recursoes de jogo_possiveis()
 
 extern byte vitorias[8][3];

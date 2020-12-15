@@ -12,7 +12,7 @@ DFLAGS    := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declar
 # Flags para compilar para o gprof
 GFLAGS    := $(LIBS) -pg $(FFLAGS)
 # Flags que serao usadas para compilar
-FLAGS     := $(DFLAGS)
+FLAGS     := $(FFLAGS)
 
 # Outras Flags
 RMFLAGS   := -f -v

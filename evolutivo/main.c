@@ -15,13 +15,13 @@ static inline bool sair() {
     return false;
 }
 
-static inline double populacao_get_elo(Populacao* populacao, int i) {
-    return individuo_get_elo(populacao_get_individuo(populacao, i));
-}
+// static inline double populacao_get_elo(Populacao* populacao, int i) {
+//     return individuo_get_elo(populacao_get_individuo(populacao, i));
+// }
 
-static inline void populacao_salvar(Populacao* populacao, int i, char* path) {
-    solucao_salvar(individuo_get_solucao(populacao_get_individuo(populacao, i)), path);
-}
+// static inline void populacao_salvar(Populacao* populacao, int i, char* path) {
+//     solucao_salvar(individuo_get_solucao(populacao_get_individuo(populacao, i)), path);
+// }
 
 /**
  * Calcula uma solucao usando algoritmo evolutivo
@@ -29,11 +29,11 @@ static inline void populacao_salvar(Populacao* populacao, int i, char* path) {
  */
 int main() {
     srand(time(NULL));
-    const int n = 200;
-    const int predados = 2;
+    const int n = 100;
+    const int predados = 1;
     const int periodo_predacao = 25;
     const int periodo_informacao = 100;
-    const double mutacao = 0.02;
+    const double mutacao = 0.03;
 
     Populacao* populacao = NULL;
     int geracao = -1;
@@ -50,7 +50,7 @@ int main() {
     while (!sair()) {
         geracao++;
 
-        ok = populacao_torneio_elo(populacao, 3);
+        ok = populacao_torneio_elo(populacao, 10);
         if (!ok) goto falha;
 
         if (geracao != 0 && geracao % periodo_informacao == 0) printf("Geracao %d\n", geracao);
@@ -70,9 +70,10 @@ int main() {
     int melhor = 0;
 
     populacao_ordena_elo(populacao);
-    printf("\n%d geracoes processadas com %lf de elo\n", geracao, populacao_get_elo(populacao, melhor));
+    solucao_correcao(populacao->pop[melhor]->sol);
+    printf("\n%d geracoes processadas com %lf de elo\n", geracao, populacao->pop[melhor]->elo);
 
-    populacao_salvar(populacao, melhor, "evolutivo.txt");
+    solucao_salvar(populacao->pop[melhor]->sol, "evolutivo.txt");
     populacao_apagar(&populacao);
     return EXIT_SUCCESS;
 

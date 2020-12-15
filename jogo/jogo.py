@@ -162,10 +162,6 @@ class Jogo:
         if self.vencedor != 0 or self.velha:
             return False
 
-        if self.jogo[i] != 0:
-            print(f'Jogando em {protege_jogada(self, i)} em vez de {i}')
-            i = protege_jogada(self, i)
-
         self.jogo[i] = self.jogador
         self.troca_vez()
         self.procura_vitoria()
@@ -177,19 +173,6 @@ class Jogo:
         i = y*3 + x
         if self.jogo[i] == 0:
             return self.fazer_jogada(i)
-
-
-def protege_jogada(jogo: Jogo, jogada):
-    if jogo.velha:
-        return jogada
-    if jogo.jogo[jogada] == 0:
-        return jogada
-
-    try:
-        return jogo.jogo.index(0)
-    except ValueError:
-        return jogada
-
 
 if __name__ == "__main__":
     print('Escolha uma solucao:')

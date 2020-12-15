@@ -10,7 +10,10 @@
  * 
  * Possui metodos para ser individuo do algoritmo evolutivo
  */
-typedef struct Individuo Individuo;
+typedef struct Individuo {
+    Solucao* sol;
+    double elo;
+} Individuo;
 
 //* ===== Criar e Apagar ===== *//
 
@@ -50,15 +53,5 @@ Individuo* individuo_crossover(Individuo* pai, Individuo* mae);
  * E garantido que pelo menos um gene sofrera mutacao
  */
 void individuo_mutacao(Individuo* individuo, double mutacao);
-
-//* ===== Getters e Setters =====*//
-
-double individuo_get_elo(Individuo* individuo);
-void individuo_set_elo(Individuo* individuo, double val);
-
-byte individuo_get_gene(Individuo* individuo, int i);
-void individuo_set_gene(Individuo* individuo, int i, int gene);
-
-Solucao* individuo_get_solucao(Individuo* individuo);
 
 #endif

@@ -24,20 +24,13 @@ extern byte simetrias_reversa[8][9];
  */
 extern byte vitorias[8][3];
 
-//* ===== Inline ===== *//
-
 /**
- * Retorna x elevado n
+ * Retorna 3 elevado n
+ * pow3[i] = (int) pow(3, i)
  */
-inline static int powi(int x, int n) {
-    register int y = 1;
-    while (n > 0) {
-        if (n % 2 != 0) y *= x;
-        x *= x;
-        n /= 2;
-    }
-    return y;
-}
+extern int pow3[10];
+
+//* ===== Inline ===== *//
 
 inline static int min(int a, int b) { return (a < b ? a : b); }
 inline static int max(int a, int b) { return (a > b ? a : b); }

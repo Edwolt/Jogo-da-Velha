@@ -1,8 +1,7 @@
 #include "solucao.h"
 
-struct Solucao {
-    byte* cromossomo;
-};
+// static const int N = 19683;   // pow(3, 9); numero de arranjos possiveis de X e O
+static const int M = 986410;  //409114;  // 1 + 9 + 9*8 + 9*8*7 + ... + 9*8*7*6*5*4*3*2*1, Numemro maximo de recursoes de jogo_possiveis()
 
 //* ===== Criar e Apagar =====*//
 
@@ -63,6 +62,27 @@ falha:
     return false;
 }
 
+bool solucao_correcao(Solucao* solucao) {
+    int i;
+    int n;
+    byte jogada;
+    byte** jogos = jogos_possiveis(&n);
+    if (!jogos) return false;
+
+    for (i = 0; i < n; i++) {
+        jogada = solucao_get_jogada(solucao, jogos[i]);
+        if (jogos[i][jogada] != 0) {
+            while (jogos[i][jogada] != 0) jogada = rand() % 9;
+            solucao_set_jogada(solucao, jogos[i], jogada);
+        }
+    }
+
+    for (i = 0; i < M; i++) free(jogos[i]);
+    free(jogos);
+
+    return true;
+}
+
 //* ===== Getters e Setters =====*//
 
 byte solucao_get_jogada(Solucao* solucao, byte* jogo) {
@@ -84,14 +104,4 @@ void solucao_set_jogada(Solucao* solucao, byte* jogo, byte jogada) {
 
     jogada = simetrias[sim][jogada];
     solucao->cromossomo[gene] = jogada;
-}
-
-byte solucao_get_gene(Solucao* solucao, int i) {
-    if (!solucao || i < 0 || i > tam_cromossomo) return -1;
-    return solucao->cromossomo[i];
-}
-
-void solucao_set_gene(Solucao* solucao, int i, byte val) {
-    if (!solucao) return;
-    solucao->cromossomo[i] = val;
 }

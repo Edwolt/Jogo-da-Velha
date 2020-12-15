@@ -1,10 +1,5 @@
 #include "individuo.h"
 
-struct Individuo {
-    Solucao* sol;
-    double elo;
-};
-
 //* ===== Criar e Apagar ===== *//
 
 Individuo* individuo_criar() {
@@ -135,7 +130,7 @@ Individuo* individuo_crossover(Individuo* pai, Individuo* mae) {
     if (!filho) return NULL;
 
     for (i = 0; i < tam_cromossomo; i++) {
-        individuo_set_gene(filho, i, individuo_get_gene((rand() % 2 ? pai : mae), i));
+        filho->sol->cromossomo[i] = (rand() % 2 ? pai : mae)->sol->cromossomo[i];
     }
 
     filho->elo = (pai->elo + mae->elo) / 2;
@@ -148,10 +143,10 @@ void individuo_mutacao(Individuo* individuo, double mutacao) {
 
     int i;
 
-    individuo_set_gene(individuo, rand() % tam_cromossomo, rand() % 9);  // Certificando que houve mutacao
+    individuo->sol->cromossomo[rand() % tam_cromossomo] = rand() % 9;
     for (i = 0; i < tam_cromossomo; i++) {
         if (rand() < RAND_MAX * mutacao) {
-            individuo_set_gene(individuo, i, rand() % 9);
+            individuo->sol->cromossomo[i] = rand() % 9;
         }
     }
 }
@@ -165,7 +160,7 @@ void individuo_set_elo(Individuo* individuo, double val) {
 
 Solucao* individuo_get_solucao(Individuo* individuo) { return (individuo ? individuo->sol : NULL); }
 
-byte individuo_get_gene(Individuo* individuo, int i) { return (individuo ? solucao_get_gene(individuo->sol, i) : -1); }
+byte individuo_get_gene(Individuo* individuo, int i) { return (individuo ? individuo->sol->cromossomo[i] : -1); }
 void individuo_set_gene(Individuo* individuo, int i, int val) {
-    if (individuo) solucao_set_gene(individuo->sol, i, val);
+    if (individuo) individuo->sol->cromossomo[i] = val;
 }
