@@ -14,7 +14,7 @@ Individuo* individuo_criar() {
     individuo->sol = solucao_criar();
     if (!individuo->sol) goto falha;
 
-    individuo->elo = 1000;
+    individuo->elo = 0;
     individuo->fitness = 0;
 
     return individuo;
@@ -29,7 +29,7 @@ Individuo* individuo_criar_random() {
 
     individuo->sol = solucao_criar_random();
     if (!individuo->sol) goto falha;
-    individuo->elo = 1000;
+    individuo->elo = 0;
     return individuo;
 
 falha:
@@ -81,7 +81,49 @@ int individuo_jogar(Individuo* a, Individuo* b) {
     return jogar(a->sol, b->sol) - jogar(b->sol, a->sol);
 }
 
-void individuo_jogar_elo(Individuo* a, Individuo* b);
+/*
+
+Ra = Ranking de a
+Rb = Ranking de b
+Sa = Resultado do duelo
+Sb = Resultado do duelo
+R'a = Novo ranking de a
+R'b = Novo ranking de b
+
+Ea = 1 / (1 + 10 ^ (Rb - Ra) / 400)
+Eb = 1 / (1 + 10 ^ (Ra - Rb) / 400)
+
+Qa = 10 ^ (Ra / 400)
+Qb = 10 ^ (Rb / 400)
+
+Ea = Qa / (Qa + Qb)
+Eb = Qb / (Qa + Qb)
+
+R'a = Ra + K(Sa - Ea)
+R'b = Rb + K(Sb - Eb)
+
+Ea + Eb = 1
+*/
+
+inline static double resultado_esperado(double Ra, double Rb) {
+    double Qa = pow(10, Ra / 400);
+    double Qb = pow(10, Rb / 400);
+    return Qa / (Qa + Qb);
+}
+
+void individuo_jogar_elo(Individuo* a, Individuo* b) {
+    double Sa = (double)(individuo_jogar(a, b) + 2) / 4;
+    double Sb = 1 - Sa;
+
+    double Ea = resultado_esperado(a->elo, b->elo);
+    double Eb = 1 - Ea;
+
+    int Ka = 24;
+    int Kb = 24;
+
+    a->elo += Ka * (Sa - Ea);
+    b->elo += Kb * (Sb - Eb);
+}
 
 void individuo_jogar_fitness(Individuo* a, Individuo* b) {
     int vitoria = individuo_jogar(a, b);

@@ -1,6 +1,7 @@
 #ifndef INDIVIDUO_H
 #define INDIVIDUO_H
 
+#include <math.h>
 #include "solucao.h"
 
 /**

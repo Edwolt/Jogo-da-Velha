@@ -49,7 +49,7 @@ class Solucao:
         for i in range(8):
             numero = 0
             for j in range(9):
-                numero += jogo[simetrias_reversa[i][j]] * (3 ** j)
+                numero += jogo[simetrias_reversa[i][j]] * 3**j
 
             if numero < minimo:
                 minimo = numero
@@ -59,12 +59,18 @@ class Solucao:
     def calc_min(self, jogo, sim):
         numero = 0
         for j in range(9):
-            numero += jogo[simetrias_reversa[sim][j]] * (3 ** j)
+            numero += jogo[simetrias_reversa[sim][j]] * 3**j
+        return numero
+
+    def calc_jogo(self, jogo):
+        numero = 0
+        for i in range(9):
+            numero += jogo[i] * 3**i
         return numero
 
     def get(self, jogo):
         sim = self.calc_simetria(jogo)
-        minimo = self.calc_min(jogo, sim)
+        minimo = self.calc_jogo(jogo)
         gene = self.mapa[minimo]
         jogada = self.sol[gene]
         return simetrias_reversa[sim][jogada]
@@ -218,6 +224,13 @@ if __name__ == "__main__":
                 quit(0)
             elif event.type == MOUSEBUTTONDOWN:
                 if jogo.on_click(event.pos):
+                    jogo.fazer_jogada(solucao.get(jogo.jogo))
+            elif event.type == KEYDOWN and event.key == K_SPACE:
+                zero = True
+                for i in jogo.jogo:
+                    if i != 0:
+                        zero = False
+                if zero:
                     jogo.fazer_jogada(solucao.get(jogo.jogo))
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 jogo.__init__()

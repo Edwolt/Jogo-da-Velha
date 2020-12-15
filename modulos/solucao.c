@@ -69,7 +69,7 @@ byte solucao_get_jogada(Solucao* solucao, byte* jogo) {
     if (!solucao) return -1;
 
     int sim = calc_sim(jogo);
-    int minimo = calc_val(jogo, sim);
+    int minimo = calc_jogo(jogo);
     int gene = mapa[minimo];
     byte jogada = solucao->cromossomo[gene];
     return simetrias_reversa[sim][jogada];
@@ -79,7 +79,7 @@ void solucao_set_jogada(Solucao* solucao, byte* jogo, byte jogada) {
     if (!solucao) return;
 
     int sim = calc_sim(jogo);
-    int minimo = calc_val(jogo, sim);
+    int minimo = calc_jogo(jogo);
     int gene = mapa[minimo];
 
     jogada = simetrias[sim][jogada];

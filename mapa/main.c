@@ -55,13 +55,17 @@ int main() {
     int m;
     int minimos[M];          // 0..M -> 0..N
     bool freq[N];            //
+    int mapa_min[N];         // 0..N -> 0..tam_cromossomo
     int mapa[N];             // 0..N -> 0..tam_cromossomo
     int tam_mapa = -1;       // Maior valor entre os minimos
     int tam_cromossomo = 0;  // Numero de valores unicos em minimos
 
     for (i = 0; i < M; i++) minimos[i] = -1;
-    for (i = 0; i < N; i++) freq[i] = false;
-    for (i = 0; i < N; i++) mapa[i] = -1;
+    for (i = 0; i < N; i++) {
+        freq[i] = false;
+        mapa_min[i] = -1;
+        mapa[i] = -1;
+    }
 
     jogos = jogos_possiveis(&m);
     if (!jogos) goto falha;
@@ -69,21 +73,24 @@ int main() {
     // Calcula os minimos de cada jogo
     for (i = 0; i < m; i++) minimos[i] = calc_min(jogos[i]);
 
-    for (i = 0; i < m; i++) {
-        tam_mapa = max(minimos[i], tam_mapa);
-        freq[minimos[i]] = true;
-    }
-    tam_mapa++;  // Tem que incluir o maior tambem
+    for (i = 0; i < m; i++) freq[minimos[i]] = true;
     for (i = 0; i < N; i++) tam_cromossomo += freq[i];
 
-    // Calcula mapa
+    // Calcula mapa_min
     int acc = 0;
     for (i = 0; i < N; i++) {
         if (freq[i]) {
-            mapa[i] = acc;
+            mapa_min[i] = acc;
             acc += 1;
         }
     }
+
+    // Calcula mapa
+    for (i = 0; i < m; i++) {
+        mapa[calc_jogo(jogos[i])] = mapa_min[calc_min(jogos[i])];
+        tam_mapa = max(tam_mapa, calc_jogo(jogos[i]));
+    }
+    tam_mapa++;  // Tem que incluir o maior tambem
 
     // Salva o mapa e um arquivo
     ok = salva_mapa("mapa.txt", mapa, tam_mapa, tam_cromossomo);

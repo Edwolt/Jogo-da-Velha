@@ -6,11 +6,13 @@ LIBS      := -lm  # Bibliotecas usadas
 # Flags para compilar
 CFLAGS    := $(LIBS) 
 # Flags para compilar um programa otimizado
-FFLAGS    := $(LIBS) -O3 -march=native -w 
-# Flags para compilar um programa para debug
+FFLAGS    := $(LIBS) -O3 -march=native
+# Flags para compilar para debug
 DFLAGS    := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address 
+# Flags para compilar para o gprof
+GFLAGS    := $(LIBS) -pg $(FFLAGS)
 # Flags que serao usadas para compilar
-FLAGS     := $(DFLAGS)
+FLAGS     := $(FFLAGS)
 
 # Outras Flags
 RMFLAGS   := -f -v

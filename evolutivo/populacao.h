@@ -33,6 +33,7 @@ void populacao_apagar(Populacao** populacao);
 void populacao_ordena(Populacao* populacao);
 void populacao_ordena_chave(Populacao* populacao);
 void populacao_ordena_fitness(Populacao* populacao);
+void populacao_ordena_elo(Populacao* populacao);
 
 //* ===== Reproducao ===== *//
 
@@ -42,10 +43,14 @@ void populacao_ordena_fitness(Populacao* populacao);
  */
 bool populacao_elitismo(Populacao* populacao);
 
+bool populacao_elitismo_elo(Populacao* populacao, int n);
+
 /**
  * Cria uma nova populacao usando torneio de dois
  */
 bool populacao_torneio(Populacao* populacao);
+
+bool populacao_torneio_elo(Populacao* populacao, int n);
 
 /**
  * Cria uma nova populacao usando um sistema de chaves

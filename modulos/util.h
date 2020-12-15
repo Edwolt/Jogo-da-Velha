@@ -30,7 +30,7 @@ extern byte vitorias[8][3];
  * Retorna x elevado n
  */
 inline static int powi(int x, int n) {
-    int y = 1;
+    register int y = 1;
     while (n > 0) {
         if (n % 2 != 0) y *= x;
         x *= x;
@@ -76,6 +76,11 @@ inline static bool venceu_ou_velha(byte* jogo) {
     byte vencedor = calc_vencedor(jogo);
     return vencedor == 1 || vencedor == 2 || vencedor == 3;
 }
+
+/**
+ * Retorna o valor do jogo
+ */
+int calc_jogo(byte* jogo);
 
 /**
  * Retorna o menor valor entre os jogos e seus simetricos

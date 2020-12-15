@@ -71,10 +71,17 @@ para a posicao equivalente no jogo especifico que foi passado,
 e para isso usamos simtreias_reversa
 */
 
+int calc_jogo(byte* jogo) {
+    int i;
+    register int numero = 0;
+    for (i = 0; i < 9; i++) numero += jogo[i] * powi(3, i);
+    return numero;
+}
+
 int calc_min(byte* jogo) {
     int i, j;
     int minimo = 3 * N;  // Nao tem como dar um numero maior que N
-    int numero;
+    register int numero;
 
     for (i = 0; i < 8; i++) {
         numero = 0;
@@ -88,7 +95,7 @@ int calc_sim(byte* jogo) {
     int i, j;
     int minimo = 3 * N;  // Nao tem como dar um numero maior que N
     int sim = -1;
-    int numero;
+    register int numero;
 
     for (i = 0; i < 8; i++) {
         numero = 0;
@@ -102,7 +109,8 @@ int calc_sim(byte* jogo) {
 }
 
 int calc_val(byte* jogo, int sim) {
-    int j, numero = 0;
+    int j;
+    register int numero = 0;
     for (j = 0; j < 9; j++) numero += jogo[simetrias_reversa[sim][j]] * powi(3, j);
     return numero;
 }

@@ -92,16 +92,48 @@ void populacao_ordena_chave(Populacao* populacao) {
 void populacao_ordena_fitness(Populacao* populacao) {
     if (!populacao) return;
 
-    populacao_fitness(populacao);
-
-    int i, j;
-
-    for (i = populacao->n - 1; i > 0; i--) {
-        for (j = 0; j < i; j++) {
-            if (individuo_get_fitness(populacao->pop[j]) < individuo_get_fitness(populacao->pop[j + 1])) {
-                swap(&populacao->pop[j], &populacao->pop[j + 1]);
+    // Shell Sort
+    int i, j, gap = 1;
+    int aux_fit;
+    Individuo* aux_ind;
+    while (gap < populacao->n) gap = 3 * gap + 1;
+    while (gap > 0) {  // Para cada gap
+        for (i = gap; i < populacao->n; i++) {
+            // Insertion Sort de i no grupo i % gap
+            aux_fit = individuo_get_fitness(populacao->pop[i]);
+            aux_ind = populacao->pop[i];
+            j = i;
+            for (j = i; j >= gap && aux_fit > individuo_get_fitness(populacao->pop[j - gap]); j -= gap) {
+                // Estou segurando o pop[i] e deslocando os valores para frente ate achar onde encaixar pop[i]
+                populacao->pop[j] = populacao->pop[j - gap];
             }
+            populacao->pop[j] = aux_ind;
         }
+        gap /= 3;
+    }
+}
+
+void populacao_ordena_elo(Populacao* populacao) {
+    if (!populacao) return;
+
+    // Shell Sort
+    int i, j, gap = 1;
+    int aux_fit;
+    Individuo* aux_ind;
+    while (gap < populacao->n) gap = 3 * gap + 1;
+    while (gap > 0) {  // Para cada gap
+        for (i = gap; i < populacao->n; i++) {
+            // Insertion Sort de i no grupo i % gap
+            aux_fit = individuo_get_elo(populacao->pop[i]);
+            aux_ind = populacao->pop[i];
+            j = i;
+            for (j = i; j >= gap && aux_fit > individuo_get_elo(populacao->pop[j - gap]); j -= gap) {
+                // Estou segurando o pop[i] e deslocando os valores para frente ate achar onde encaixar pop[i]
+                populacao->pop[j] = populacao->pop[j - gap];
+            }
+            populacao->pop[j] = aux_ind;
+        }
+        gap /= 3;
     }
 }
 
@@ -117,11 +149,8 @@ bool populacao_elitismo(Populacao* populacao) {
     if (!nova_pop) goto falha;
     for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
 
-    nova_pop[0] = individuo_crossover(populacao->pop[0], populacao->pop[0]);  // Guarda o melhor de todos
-    if (!nova_pop[0]) goto falha;
-
-    for (i = 1; i < populacao->n; i++) {
-        nova_pop[i] = individuo_crossover(populacao->pop[0], populacao->pop[1]);
+    for (i = 0; i < populacao->n; i++) {
+        nova_pop[i] = individuo_crossover(populacao->pop[0], populacao->pop[i]);
         if (!nova_pop[i]) goto falha;
     }
 
@@ -162,6 +191,108 @@ bool populacao_torneio(Populacao* populacao) {
         a = rand() % populacao->n;
         b = rand() % populacao->n;
         mae = (individuo_jogar(populacao->pop[a], populacao->pop[b]) > 0 ? a : b);
+
+        nova_pop[i] = individuo_crossover(populacao->pop[pai], populacao->pop[mae]);
+        if (!nova_pop[i]) goto falha;
+    }
+
+    for (i = 0; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
+    free(populacao->pop);
+    populacao->pop = nova_pop;
+
+    return true;
+
+falha:
+    if (nova_pop) {
+        for (i = 0; i < populacao->n; i++) individuo_apagar(&nova_pop[i]);
+        free(nova_pop);
+    }
+    return false;
+}
+
+static void competir_elo(Populacao* populacao, int n) {
+    int i;
+    int a, b;
+
+    for (i = 0; i < populacao->n * n; i++) {
+        a = rand() % populacao->n;
+        b = rand() % populacao->n;
+        individuo_jogar_elo(populacao->pop[a], populacao->pop[b]);
+    }
+}
+
+static void ajusta_elo(Populacao* populacao) {
+    int i;
+    double ajuste = individuo_get_elo(populacao->pop[populacao->n - 1]);
+    for (i = 0; i < populacao->n; i++) {
+        individuo_set_elo(populacao->pop[i], individuo_get_elo(populacao->pop[i]) - ajuste);
+    }
+}
+
+bool populacao_elitismo_elo(Populacao* populacao, int n) {
+    if (!populacao) return false;
+
+    Individuo** nova_pop = NULL;
+    int i;
+
+    nova_pop = malloc(populacao->n * sizeof(Individuo*));
+    if (!nova_pop) goto falha;
+    for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
+
+    competir_elo(populacao, n);
+    populacao_ordena_elo(populacao);
+
+    ajusta_elo(populacao);
+
+    for (i = 0; i < populacao->n; i++) {
+        nova_pop[i] = individuo_crossover(populacao->pop[0], populacao->pop[i]);
+        if (!nova_pop[i]) goto falha;
+    }
+
+    for (i = 0; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
+    free(populacao->pop);
+    populacao->pop = nova_pop;
+
+    populacao_ordena_elo(populacao);
+    ajusta_elo(populacao);
+
+    return true;
+
+falha:
+    if (nova_pop) {
+        for (i = 0; i < populacao->n; i++) individuo_apagar(&nova_pop[i]);
+        free(nova_pop);
+    }
+    return false;
+}
+
+bool populacao_torneio_elo(Populacao* populacao, int n) {
+    if (!populacao) return false;
+
+    Individuo** nova_pop = NULL;
+    int i;
+    int a, b;
+    int pai, mae;
+
+    nova_pop = malloc(populacao->n * sizeof(Individuo*));
+    if (!nova_pop) goto falha;
+    for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
+
+    competir_elo(populacao, n);
+    populacao_ordena_elo(populacao);
+    ajusta_elo(populacao);
+
+    nova_pop[0] = individuo_crossover(populacao->pop[0], populacao->pop[0]);  // Guarda o melhor de todos
+    if (!nova_pop[0]) goto falha;
+
+    for (i = 1; i < populacao->n; i++) {
+        a = rand() % populacao->n;
+        b = rand() % populacao->n;
+        pai = (individuo_get_elo(populacao->pop[a]) > individuo_get_elo(populacao->pop[b]) ? a : b);
+
+        a = rand() % populacao->n;
+        b = rand() % populacao->n;
+        mae = (individuo_get_elo(populacao->pop[a]) > individuo_get_elo(populacao->pop[b]) ? a : b);
 
         nova_pop[i] = individuo_crossover(populacao->pop[pai], populacao->pop[mae]);
         if (!nova_pop[i]) goto falha;
