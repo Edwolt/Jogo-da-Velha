@@ -3,7 +3,6 @@
 struct Individuo {
     Solucao* sol;
     double elo;
-    int fitness;
 };
 
 //* ===== Criar e Apagar ===== *//
@@ -13,10 +12,7 @@ Individuo* individuo_criar() {
 
     individuo->sol = solucao_criar();
     if (!individuo->sol) goto falha;
-
     individuo->elo = 0;
-    individuo->fitness = 0;
-
     return individuo;
 
 falha:
@@ -47,7 +43,7 @@ void individuo_apagar(Individuo** individuo) {
 
 //* ===== Jogar ===== *//
 
-static int jogar(Solucao* a, Solucao* b) {
+static int _jogar(Solucao* a, Solucao* b) {
     if (!a || !b) return 0;
 
     byte jogo[9];
@@ -76,9 +72,9 @@ static int jogar(Solucao* a, Solucao* b) {
     return 0;
 }
 
-int individuo_jogar(Individuo* a, Individuo* b) {
+static int jogar(Individuo* a, Individuo* b) {
     if (!a || !b) return 0;
-    return jogar(a->sol, b->sol) - jogar(b->sol, a->sol);
+    return _jogar(a->sol, b->sol) - _jogar(b->sol, a->sol);
 }
 
 /*
@@ -112,7 +108,9 @@ inline static double resultado_esperado(double Ra, double Rb) {
 }
 
 void individuo_jogar_elo(Individuo* a, Individuo* b) {
-    double Sa = (double)(individuo_jogar(a, b) + 2) / 4;
+    if (!a || !b) return;
+
+    double Sa = (double)(jogar(a, b) + 2) / 4;
     double Sb = 1 - Sa;
 
     double Ea = resultado_esperado(a->elo, b->elo);
@@ -123,12 +121,6 @@ void individuo_jogar_elo(Individuo* a, Individuo* b) {
 
     a->elo += Ka * (Sa - Ea);
     b->elo += Kb * (Sb - Eb);
-}
-
-void individuo_jogar_fitness(Individuo* a, Individuo* b) {
-    int vitoria = individuo_jogar(a, b);
-    a->fitness += vitoria;
-    b->fitness -= vitoria;
 }
 
 //* ===== Outros metodos ===== *//
@@ -152,6 +144,8 @@ Individuo* individuo_crossover(Individuo* pai, Individuo* mae) {
 }
 
 void individuo_mutacao(Individuo* individuo, double mutacao) {
+    if (!individuo) return;
+
     int i;
 
     individuo_set_gene(individuo, rand() % tam_cromossomo, rand() % 9);  // Certificando que houve mutacao
@@ -174,9 +168,4 @@ Solucao* individuo_get_solucao(Individuo* individuo) { return (individuo ? indiv
 byte individuo_get_gene(Individuo* individuo, int i) { return (individuo ? solucao_get_gene(individuo->sol, i) : -1); }
 void individuo_set_gene(Individuo* individuo, int i, int val) {
     if (individuo) solucao_set_gene(individuo->sol, i, val);
-}
-
-int individuo_get_fitness(Individuo* individuo) { return (individuo ? individuo->fitness : 0); }
-void individuo_set_fitness(Individuo* individuo, int val) {
-    if (individuo) individuo->fitness = val;
 }

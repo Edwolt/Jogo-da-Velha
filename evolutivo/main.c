@@ -15,10 +15,6 @@ static inline bool sair() {
     return false;
 }
 
-static inline int populacao_get_fitness(Populacao* populacao, int i) {
-    return individuo_get_fitness(populacao_get_individuo(populacao, i));
-}
-
 static inline double populacao_get_elo(Populacao* populacao, int i) {
     return individuo_get_elo(populacao_get_individuo(populacao, i));
 }
@@ -33,10 +29,10 @@ static inline void populacao_salvar(Populacao* populacao, int i, char* path) {
  */
 int main() {
     srand(time(NULL));
-    const int n = 512;
+    const int n = 200;
     const int predados = 2;
     const int periodo_predacao = 25;
-    const int periodo_grafico = -100;
+    const int periodo_informacao = 100;
     const double mutacao = 0.02;
 
     Populacao* populacao = NULL;
@@ -51,49 +47,13 @@ int main() {
     if (!populacao) goto falha;
 
     enable_raw_mode();
-    while (!sair() && geracao <= 100) {
+    while (!sair()) {
         geracao++;
 
-        // populacao_ordena_fitness(populacao);
         ok = populacao_torneio_elo(populacao, 3);
         if (!ok) goto falha;
 
-        if (periodo_grafico != 0 && geracao % periodo_grafico == 0) {
-            // if (periodo_grafico > 0) {
-            //     populacao_ordena_fitness(populacao);
-            //     int aux = populacao_get_fitness(populacao, 0);
-            //     int maior = aux;
-            //     int menor = aux;
-            //     double desvio = 0;
-
-            //     for (int i = 0; i < n; i++) {
-            //         aux = populacao_get_fitness(populacao, i);
-            //         maior = max(maior, aux);
-            //         menor = min(menor, aux);
-            //         desvio += aux * aux;
-            //     }
-            //     desvio = sqrt(desvio / n);
-            //     printf("Geracao %d: %3d %3d %3.3lf\n", geracao, maior, menor, desvio);
-            // } else {
-            //     printf("Geracao %d\n", geracao);
-            // }
-            if (periodo_grafico > 0) {
-                double aux = populacao_get_elo(populacao, 0);
-                double maior = aux;
-                double menor = aux;
-                double desvio = 0;
-                for (int i = 0; i < n; i++) {
-                    aux = populacao_get_elo(populacao, i);
-                    maior = (maior > aux ? maior : aux);
-                    menor = (menor < aux ? menor : aux);
-                    desvio += aux * aux;
-                }
-                desvio = sqrt(desvio / n);
-                printf("Geracao %d: %3.3lf %3.3lf %3.3f\n", geracao, maior, menor, desvio);
-            } else {
-                printf("Geracao %d\n", geracao);
-            }
-        }
+        if (geracao != 0 && geracao % periodo_informacao == 0) printf("Geracao %d\n", geracao);
 
         ok = populacao_predacao_sintese(populacao, predados);
         if (!ok) goto falha;
@@ -110,8 +70,7 @@ int main() {
     int melhor = 0;
 
     populacao_ordena_elo(populacao);
-    printf("\n%d geracoes processadas com %lf\n", geracao, populacao_get_elo(populacao, melhor));
-    // printf("\n%d geracoes processadas\n", geracao);
+    printf("\n%d geracoes processadas com %lf de elo\n", geracao, populacao_get_elo(populacao, melhor));
 
     populacao_salvar(populacao, melhor, "evolutivo.txt");
     populacao_apagar(&populacao);

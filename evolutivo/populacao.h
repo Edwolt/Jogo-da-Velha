@@ -30,34 +30,24 @@ void populacao_apagar(Populacao** populacao);
 
 //* ===== Ordena ===== *//
 
-void populacao_ordena(Populacao* populacao);
-void populacao_ordena_chave(Populacao* populacao);
-void populacao_ordena_fitness(Populacao* populacao);
+/**
+ * Ordena a populacao pelo elo de cada individuo
+ */
 void populacao_ordena_elo(Populacao* populacao);
 
 //* ===== Reproducao ===== *//
 
 /**
- * Cria uma nova populacao usando elitismo de dois
- * (considerando que o melhor de todos esta na posicao 0)
+ * Cria uma nova populacao usando o metodo elitismo
+ * baseado no elo dos individuos
  */
-bool populacao_elitismo(Populacao* populacao);
-
 bool populacao_elitismo_elo(Populacao* populacao, int n);
 
 /**
- * Cria uma nova populacao usando torneio de dois
+ * Cria uma nova populacao usando o metodo torneio de dois
+ * baseado no elo dos individuos
  */
-bool populacao_torneio(Populacao* populacao);
-
 bool populacao_torneio_elo(Populacao* populacao, int n);
-
-/**
- * Cria uma nova populacao usando um sistema de chaves
- * onde quem ganhar disputa com os outros que ganhou
- * ate descobri quem eh o melhor de todos
- */
-bool populacao_chave(Populacao* populacao);
 
 //* ===== Mutacao ===== *//
 
@@ -82,14 +72,8 @@ bool populacao_predacao_sintese(Populacao* populacao, int n);
  */
 bool populacao_predacao_randomica(Populacao* populacao, int n);
 
-//* ===== Outros metodos ===== *//
-
-/**
- * Faz o calculo do fitness de cada individuo da populacao
- */
-void populacao_fitness(Populacao* populacao);
-
 //* ===== Getters e Setters =====*//
+
 Individuo* populacao_get_individuo(Populacao* populacao, int i);
 
 #endif

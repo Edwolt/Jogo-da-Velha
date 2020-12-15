@@ -32,19 +32,9 @@ void individuo_apagar(Individuo** individuo);
 //* ===== Jogar ===== *//
 
 /**
- * Faz com que os dois individuos joguem o jogo da velha um contra o outro
- * 
- * Ocorre uma partida com o a comecando e outra com o b comecando
- * se o a ganhar aumenta 1 ponto e se perder diminui um ponto do valor retornado
+ * Faz dois inviduos jogar atualizando o elo deles
  */
-int individuo_jogar(Individuo* a, Individuo* b);
-
 void individuo_jogar_elo(Individuo* a, Individuo* b);
-
-/**
- * O dois individuos jogam atualizando o fitness
- */
-void individuo_jogar_fitness(Individuo* a, Individuo* b);
 
 //* ===== Outros metodos ===== *//
 
@@ -62,6 +52,7 @@ Individuo* individuo_crossover(Individuo* pai, Individuo* mae);
 void individuo_mutacao(Individuo* individuo, double mutacao);
 
 //* ===== Getters e Setters =====*//
+
 double individuo_get_elo(Individuo* individuo);
 void individuo_set_elo(Individuo* individuo, double val);
 
@@ -69,8 +60,5 @@ byte individuo_get_gene(Individuo* individuo, int i);
 void individuo_set_gene(Individuo* individuo, int i, int gene);
 
 Solucao* individuo_get_solucao(Individuo* individuo);
-
-int individuo_get_fitness(Individuo* individuo);
-void individuo_set_fitness(Individuo* individuo, int val);
 
 #endif
