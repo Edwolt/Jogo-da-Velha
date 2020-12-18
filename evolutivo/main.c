@@ -6,6 +6,14 @@
 #include "populacao.h"
 #include "solucao.h"
 
+char path_base10[100] = "";
+static inline bool is_base10(int n) {
+    if (n == 0) return true;
+    register int m = 1;
+    while (m < n) m *= 10;
+    return n == m;
+}
+
 static inline bool sair() {
     char c;
     if (kbhit()) {
@@ -15,25 +23,17 @@ static inline bool sair() {
     return false;
 }
 
-// static inline double populacao_get_elo(Populacao* populacao, int i) {
-//     return individuo_get_elo(populacao_get_individuo(populacao, i));
-// }
-
-// static inline void populacao_salvar(Populacao* populacao, int i, char* path) {
-//     solucao_salvar(individuo_get_solucao(populacao_get_individuo(populacao, i)), path);
-// }
-
 /**
  * Calcula uma solucao usando algoritmo evolutivo
  * e salva em evolutivo.txt
  */
 int main() {
     srand(time(NULL));
-    const int n = 100;
-    const int predados = 1;
+    const int n = 200;
+    const int predados = 2;
     const int periodo_predacao = 25;
-    const int periodo_informacao = 100;
-    const double mutacao = 0.03;
+    const int periodo_informacao = 10;
+    const double mutacao = 0.02;
 
     Populacao* populacao = NULL;
     int geracao = -1;
@@ -45,15 +45,22 @@ int main() {
 
     populacao = populacao_criar(n);
     if (!populacao) goto falha;
+    populacao_fitness(populacao);
 
     enable_raw_mode();
-    while (!sair()) {
+    while (!sair() && geracao < 500) {
         geracao++;
 
-        ok = populacao_torneio_elo(populacao, 10);
+        ok = populacao_torneio(populacao);
         if (!ok) goto falha;
+        populacao_fitness(populacao);
 
-        if (geracao != 0 && geracao % periodo_informacao == 0) printf("Geracao %d\n", geracao);
+        if (periodo_informacao != 0 && geracao % periodo_informacao == 0) {
+            printf("Geracao %3d, %3d, %3d\n",
+                   geracao,
+                   populacao->pop[0]->fitness,
+                   populacao->pop[n - 1]->fitness);
+        }
 
         ok = populacao_predacao_sintese(populacao, predados);
         if (!ok) goto falha;
@@ -67,13 +74,12 @@ int main() {
     }
     disable_raw_mode();
 
-    int melhor = 0;
+    populacao_fitness(populacao);
+    solucao_correcao(populacao->pop[0]->sol);
+    printf("\n%d geracoes processadas com %d de fitness\n", geracao, populacao->pop[0]->fitness);
 
-    populacao_ordena_elo(populacao);
-    solucao_correcao(populacao->pop[melhor]->sol);
-    printf("\n%d geracoes processadas com %lf de elo\n", geracao, populacao->pop[melhor]->elo);
-
-    solucao_salvar(populacao->pop[melhor]->sol, "evolutivo.txt");
+    solucao_salvar(populacao->pop[0]->sol, "evolutivo.txt");
+    printf("Melhor solucao salvo em elitismo.txt\n");
     populacao_apagar(&populacao);
     return EXIT_SUCCESS;
 

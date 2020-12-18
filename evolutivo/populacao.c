@@ -47,19 +47,36 @@ inline static void swap(Individuo** a, Individuo** b) {
     *b = aux;
 }
 
-void populacao_ordena_elo(Populacao* populacao) {
+inline static int individuo_fitness(Populacao* populacao, Individuo* individuo) {
+    int i;
+    register int fitness = 0;
+
+    for (i = 0; i < populacao->n; i++) {
+        fitness += individuo_jogar(individuo, populacao->pop[i]);
+    }
+
+    return fitness;
+}
+
+void populacao_fitness(Populacao* populacao) {
     if (!populacao) return;
 
-    // Shell Sort
     int i, j, gap = 1;
     Individuo* aux;
+
+    // Fitness da populacao
+    for (i = 0; i < populacao->n; i++) {
+        populacao->pop[i]->fitness = individuo_fitness(populacao, populacao->pop[i]);
+    }
+
+    // Ordena com Shell Sort
     while (gap < populacao->n) gap = 3 * gap + 1;
     while (gap > 0) {  // Para cada gap
         for (i = gap; i < populacao->n; i++) {
             // Insertion Sort de i no grupo i % gap
             aux = populacao->pop[i];
             j = i;
-            for (j = i; j >= gap && aux->elo > populacao->pop[j - gap]->elo; j -= gap) {
+            for (j = i; j >= gap && aux->fitness > populacao->pop[j - gap]->fitness; j -= gap) {
                 // Estou segurando o pop[i] e deslocando os valores para frente ate achar onde encaixar pop[i]
                 populacao->pop[j] = populacao->pop[j - gap];
             }
@@ -71,26 +88,7 @@ void populacao_ordena_elo(Populacao* populacao) {
 
 //* ===== Reproducao ===== *//
 
-static void competir_elo(Populacao* populacao, int n) {
-    int i;
-    int a, b;
-
-    for (i = 0; i < populacao->n * n; i++) {
-        a = rand() % populacao->n;
-        b = rand() % populacao->n;
-        individuo_jogar_elo(populacao->pop[a], populacao->pop[b]);
-    }
-}
-
-static void ajusta_elo(Populacao* populacao) {
-    int i;
-    double ajuste = populacao->pop[populacao->n - 1]->elo;
-    for (i = 0; i < populacao->n; i++) {
-        populacao->pop[i]->elo -= ajuste;
-    }
-}
-
-bool populacao_elitismo_elo(Populacao* populacao, int n) {
+bool populacao_elitismo(Populacao* populacao) {
     if (!populacao) return false;
 
     Individuo** nova_pop = NULL;
@@ -100,11 +98,6 @@ bool populacao_elitismo_elo(Populacao* populacao, int n) {
     if (!nova_pop) goto falha;
     for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
 
-    competir_elo(populacao, n);
-    populacao_ordena_elo(populacao);
-
-    ajusta_elo(populacao);
-
     for (i = 0; i < populacao->n; i++) {
         nova_pop[i] = individuo_crossover(populacao->pop[0], populacao->pop[i]);
         if (!nova_pop[i]) goto falha;
@@ -113,9 +106,6 @@ bool populacao_elitismo_elo(Populacao* populacao, int n) {
     for (i = 0; i < populacao->n; i++) individuo_apagar(&populacao->pop[i]);
     free(populacao->pop);
     populacao->pop = nova_pop;
-
-    populacao_ordena_elo(populacao);
-    ajusta_elo(populacao);
 
     return true;
 
@@ -127,7 +117,7 @@ falha:
     return false;
 }
 
-bool populacao_torneio_elo(Populacao* populacao, int n) {
+bool populacao_torneio(Populacao* populacao) {
     if (!populacao) return false;
 
     Individuo** nova_pop = NULL;
@@ -139,21 +129,17 @@ bool populacao_torneio_elo(Populacao* populacao, int n) {
     if (!nova_pop) goto falha;
     for (i = 0; i < populacao->n; i++) nova_pop[i] = NULL;
 
-    competir_elo(populacao, n);
-    populacao_ordena_elo(populacao);
-    ajusta_elo(populacao);
-
     nova_pop[0] = individuo_crossover(populacao->pop[0], populacao->pop[0]);  // Guarda o melhor de todos
     if (!nova_pop[0]) goto falha;
 
     for (i = 1; i < populacao->n; i++) {
         a = rand() % populacao->n;
         b = rand() % populacao->n;
-        pai = (populacao->pop[a]->elo > populacao->pop[b]->elo ? a : b);
+        pai = (populacao->pop[a]->fitness > populacao->pop[b]->fitness ? a : b);
 
         a = rand() % populacao->n;
         b = rand() % populacao->n;
-        mae = (populacao->pop[a]->elo > populacao->pop[b]->elo ? a : b);
+        mae = (populacao->pop[a]->fitness > populacao->pop[b]->fitness ? a : b);
 
         nova_pop[i] = individuo_crossover(populacao->pop[pai], populacao->pop[mae]);
         if (!nova_pop[i]) goto falha;
@@ -214,6 +200,7 @@ bool populacao_predacao_sintese(Populacao* populacao, int n) {
         sintese->sol->cromossomo[i] = maior;
     }
 
+    individuo_fitness(populacao, sintese);
     individuo_apagar(&populacao->pop[k]);
     populacao->pop[k] = sintese;
 
@@ -231,6 +218,7 @@ bool populacao_predacao_randomica(Populacao* populacao, int n) {
         novo = individuo_criar_random();
         if (!novo) goto falha;
 
+        individuo_fitness(populacao, novo);
         individuo_apagar(&populacao->pop[k - i]);
         populacao->pop[k - i] = novo;
     }

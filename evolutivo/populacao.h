@@ -34,23 +34,24 @@ void populacao_apagar(Populacao** populacao);
 //* ===== Ordena ===== *//
 
 /**
- * Ordena a populacao pelo elo de cada individuo
+ * Calcula o fitness de cada individuo da populacao
+ * e ordena a populacao pelo fitness
  */
-void populacao_ordena_elo(Populacao* populacao);
+void populacao_fitness(Populacao* populacao);
 
 //* ===== Reproducao ===== *//
 
 /**
  * Cria uma nova populacao usando o metodo elitismo
- * baseado no elo dos individuos
+ * Considera que o primeiro individuo eh o melhor de todos
  */
-bool populacao_elitismo_elo(Populacao* populacao, int n);
+bool populacao_elitismo(Populacao* populacao);
 
 /**
- * Cria uma nova populacao usando o metodo torneio de dois
- * baseado no elo dos individuos
+ * Cria uma nova populacao usando o metodo torneio de dois baseado no fitness dos individuos
+ * Considera que o primeiro individuo eh o melhor de todos
  */
-bool populacao_torneio_elo(Populacao* populacao, int n);
+bool populacao_torneio(Populacao* populacao);
 
 //* ===== Mutacao ===== *//
 

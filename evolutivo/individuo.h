@@ -12,7 +12,7 @@
  */
 typedef struct Individuo {
     Solucao* sol;
-    double elo;
+    int fitness;
 } Individuo;
 
 //* ===== Criar e Apagar ===== *//
@@ -37,7 +37,7 @@ void individuo_apagar(Individuo** individuo);
 /**
  * Faz dois inviduos jogar atualizando o elo deles
  */
-void individuo_jogar_elo(Individuo* a, Individuo* b);
+int individuo_jogar(Individuo* a, Individuo* b);
 
 //* ===== Outros metodos ===== *//
 
