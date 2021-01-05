@@ -21,6 +21,8 @@ typedef struct Populacao {
 
 //* ===== Criar e Apagar ===== *//
 
+bool populacao_oponentes(int n);
+
 /**
  * Cria um objeto populacao alocando ele na memoria
  */

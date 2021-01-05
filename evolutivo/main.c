@@ -6,13 +6,7 @@
 #include "populacao.h"
 #include "solucao.h"
 
-char path_base10[100] = "";
-static inline bool is_base10(int n) {
-    if (n == 0) return true;
-    register int m = 1;
-    while (m < n) m *= 10;
-    return n == m;
-}
+// char path[100] = "";
 
 static inline bool sair() {
     char c;
@@ -33,10 +27,11 @@ int main() {
     const int predados = 2;
     const int periodo_predacao = 25;
     const int periodo_informacao = 10;
-    const double mutacao = 0.02;
+    const double mutacao = 0.002;
 
     Populacao* populacao = NULL;
     int geracao = -1;
+    int ind = 0;
 
     bool ok;
 
@@ -45,10 +40,12 @@ int main() {
 
     populacao = populacao_criar(n);
     if (!populacao) goto falha;
+
+    // populacao_oponentes(n);
     populacao_fitness(populacao);
 
     enable_raw_mode();
-    while (!sair() && geracao < 500) {
+    while (!sair() && geracao < 2500) {
         geracao++;
 
         ok = populacao_torneio(populacao);
@@ -56,10 +53,7 @@ int main() {
         populacao_fitness(populacao);
 
         if (periodo_informacao != 0 && geracao % periodo_informacao == 0) {
-            printf("Geracao %3d, %3d, %3d\n",
-                   geracao,
-                   populacao->pop[0]->fitness,
-                   populacao->pop[n - 1]->fitness);
+            printf("Geracao %3d, %d, %d\n", geracao, populacao->pop[0]->fitness, populacao->pop[n-1]->fitness);
         }
 
         ok = populacao_predacao_sintese(populacao, predados);

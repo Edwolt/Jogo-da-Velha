@@ -59,6 +59,30 @@ falha:
     return false;
 }
 
+Solucao* solucao_carregar(char* path) {
+    Solucao* solucao = NULL;
+    FILE* arquivo = NULL;
+    int i;
+
+    solucao = solucao_criar();
+    if (!solucao) goto falha;
+
+    arquivo = fopen(path, "r");
+    if (!arquivo) goto falha;
+
+    for (i = 0; i < tam_cromossomo; i++) {
+        fscanf(arquivo, "%hhd", &solucao->cromossomo[i]);
+        if (ferror(arquivo)) goto falha;
+    }
+    fclose(arquivo);
+    return solucao;
+
+falha:
+    solucao_apagar(&solucao);
+    fclose(arquivo);
+    return NULL;
+}
+
 bool solucao_correcao(Solucao* solucao) {
     int i;
     int n;

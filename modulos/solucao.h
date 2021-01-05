@@ -44,6 +44,8 @@ void solucao_apagar(Solucao** Solucao);
  */
 bool solucao_salvar(Solucao* solucao, char* path);
 
+Solucao* solucao_carregar(char* path);
+
 /**
  * Corrige a solucao para que ela nao faca jogadas invalidas
  */
