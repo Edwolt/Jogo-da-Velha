@@ -1,5 +1,6 @@
 .vscode
 *.txt
+!requirements.txt
 *.sh
 *.csv
 

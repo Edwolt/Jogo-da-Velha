@@ -6,8 +6,6 @@
 #include "populacao.h"
 #include "solucao.h"
 
-// char path[100] = "";
-
 static inline bool sair() {
     char c;
     if (kbhit()) {
@@ -31,7 +29,6 @@ int main() {
 
     Populacao* populacao = NULL;
     int geracao = -1;
-    int ind = 0;
 
     bool ok;
 
@@ -41,11 +38,10 @@ int main() {
     populacao = populacao_criar(n);
     if (!populacao) goto falha;
 
-    // populacao_oponentes(n);
     populacao_fitness(populacao);
 
     enable_raw_mode();
-    while (!sair() && geracao < 2500) {
+    while (!sair()) {
         geracao++;
 
         ok = populacao_torneio(populacao);
@@ -53,7 +49,7 @@ int main() {
         populacao_fitness(populacao);
 
         if (periodo_informacao != 0 && geracao % periodo_informacao == 0) {
-            printf("Geracao %3d, %d, %d\n", geracao, populacao->pop[0]->fitness, populacao->pop[n-1]->fitness);
+            printf("Geracao %3d, %d, %d\n", geracao, populacao->pop[0]->fitness, populacao->pop[n - 1]->fitness);
         }
 
         ok = populacao_predacao_sintese(populacao, predados);

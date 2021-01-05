@@ -60,6 +60,8 @@ falha:
 }
 
 Solucao* solucao_carregar(char* path) {
+    if (!path) return NULL;
+
     Solucao* solucao = NULL;
     FILE* arquivo = NULL;
     int i;
@@ -84,6 +86,8 @@ falha:
 }
 
 bool solucao_correcao(Solucao* solucao) {
+    if (!solucao) return false;
+
     int i;
     int n;
     byte jogada;

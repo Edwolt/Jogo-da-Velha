@@ -13,8 +13,10 @@ para isso use o comando para calcular verificando todas as possibilidade:
 `make run_minmax`
 ou use `make run_evolutivo` para calcular usando um algoritmo evolutivo
 
-Para poder rodar o jogo use o comando (requer python3 e o modulo pygame):
+Para poder rodar o jogo use o comando (precisa do python3 e dos modulo listados em requirements.txt):
 `make run_jogo`
+
+Ou simplesmente use o comando `make run_all`
 
 # Modulos
 

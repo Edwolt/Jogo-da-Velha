@@ -44,6 +44,10 @@ void solucao_apagar(Solucao** Solucao);
  */
 bool solucao_salvar(Solucao* solucao, char* path);
 
+/**
+ * Carrega a solucao no arquivo path
+ * Retorna NULL se nao for possivel
+ */
 Solucao* solucao_carregar(char* path);
 
 /**

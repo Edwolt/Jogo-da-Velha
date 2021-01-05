@@ -2,34 +2,6 @@
 
 //* ===== Criar e Apagar ===== *//
 
-Individuo** oponentes = NULL;
-bool populacao_oponentes(int n) {
-    int i;
-    char path[100] = "";
-    oponentes = malloc(n * sizeof(Individuo*));
-    if (!oponentes) goto falha;
-    for (i = 0; i < n; i++) oponentes[i] = NULL;
-    for (i = 0; i < n; i++) {
-        oponentes[i] = individuo_criar();
-        if (!oponentes[i]) goto falha;
-    }
-
-    int ind = 399;
-    for (i = 0; i < n; i++) {
-        path[0] = '\0';
-        sprintf(path, "%d.txt", ind - i);
-        oponentes[i]->sol = solucao_carregar(path);
-    }
-    return true;
-
-falha:
-    if (oponentes) {
-        for (i = 0; i < n; i++) individuo_apagar(&oponentes[i]);
-        free(oponentes);
-    }
-    return false;
-}
-
 Populacao* populacao_criar(int n) {
     Populacao* populacao = NULL;
     int i;
@@ -81,7 +53,6 @@ inline static int individuo_fitness(Populacao* populacao, Individuo* individuo) 
 
     for (i = 0; i < populacao->n; i++) {
         fitness += individuo_jogar(individuo, populacao->pop[i]);
-        // fitness += individuo_jogar(individuo, oponentes[i]);
     }
 
     return fitness;
