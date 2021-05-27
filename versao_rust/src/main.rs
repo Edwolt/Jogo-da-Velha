@@ -1,5 +1,7 @@
 use std::io;
 
+mod jogo;
+
 fn main() {
     loop {
         println!("[1] Jogar");
@@ -18,10 +20,7 @@ fn main() {
 
         match option {
             0 => break,
-            1 => println!("Não implementado ainda"),
-            2 => println!("Não implementado ainda"),
-            3 => println!("Não implementado ainda"),
-            4 => println!("Não implementado ainda"),
+            1 | 2 | 3 | 4 => println!("Não implementado ainda"),
             _ => break,
         }
     }
