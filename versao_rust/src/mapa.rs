@@ -1,5 +1,7 @@
 use crate::jogo::Jogo;
+use std::fs;
 use std::fs::File;
+use std::io::Read;
 use std::io::Result;
 use std::io::{BufWriter, Write};
 
@@ -75,7 +77,38 @@ impl Mapa {
         Ok(())
     }
 
-    pub fn carregar() {}
+    pub fn carregar(path: &str) -> Result<Mapa> {
+        let conteudo = fs::read_to_string(path)?;
+        let mut conteudo = conteudo.split("\n");
+
+        let mut tupla = conteudo.next().expect("Mapa vazio").trim().split(" ");
+        let tam_mapa = tupla
+            .next()
+            .expect("Mapa invalido")
+            .trim()
+            .parse::<usize>()
+            .expect("Mapa invalido");
+        let tam_cromossomo = tupla
+            .next()
+            .expect("Mapa invalido")
+            .trim()
+            .parse::<usize>()
+            .expect("Mapa invalido");
+
+        let mut mapa: Vec<Option<usize>> = Vec::with_capacity(tam_mapa);
+        for dado in conteudo {
+            let dado = match dado.trim().parse::<isize>().expect("Mapa invalido") {
+                -1 => None,
+                n @ _ => Some(n as usize),
+            };
+            mapa.push(dado);
+        }
+
+        Ok(Mapa {
+            mapa,
+            tam_cromossomo,
+        })
+    }
 
     pub fn len(&self) -> usize {
         self.mapa.len()

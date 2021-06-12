@@ -14,7 +14,7 @@ fn main() {
         println!("[0] Sair");
 
         let option = {
-            let mut buffer: String = String::new();
+            let mut buffer = String::new();
             io::stdin()
                 .read_line(&mut buffer)
                 .expect("Esperava um número");
