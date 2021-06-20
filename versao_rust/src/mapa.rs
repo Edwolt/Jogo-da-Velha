@@ -1,10 +1,10 @@
 use crate::jogo::Jogo;
 use std::fs;
 use std::fs::File;
-use std::io::Read;
 use std::io::Result;
 use std::io::{BufWriter, Write};
 
+#[derive(Debug)]
 pub struct Mapa {
     mapa: Vec<Option<usize>>,
     tam_cromossomo: usize,
@@ -13,7 +13,7 @@ pub struct Mapa {
 impl Mapa {
     pub fn criar() -> Mapa {
         // Considere M o número de jogos possíveis
-        // Considere N o número arranjos de X e O
+        // Considere N o número arranjos de Z, X e O
         // Considere T o tamanho do cromossomo (max(minimos))
 
         // [M]
@@ -28,18 +28,15 @@ impl Mapa {
             freq[i] = true;
         }
 
-        let mut tam_cromossomo: usize = 0;
-        for &i in &freq {
-            if i {
-                tam_cromossomo += 1;
-            }
-        }
+        let tam_cromossomo: usize = freq
+            .iter()
+            .fold(0, |count, &i| if i { count + 1 } else { count });
 
         // [N] 0..N -> 0..T
         let mut mapa_min = vec![None; 3usize.pow(9)];
         let mut acc = 0;
-        for i in 0..3usize.pow(9) {
-            if freq[i] {
+        for (i, &b) in freq.iter().enumerate() {
+            if b {
                 mapa_min[i] = Some(acc);
                 acc += 1;
             }
@@ -53,6 +50,7 @@ impl Mapa {
             mapa[num] = mapa_min[i.minimo()];
             tam_mapa = tam_mapa.max(num);
         }
+        tam_mapa += 1; // Tem que incluir o maior também
 
         mapa.resize(tam_mapa, None);
 

@@ -1,3 +1,4 @@
+use std::fmt::{Debug, Formatter};
 use std::ops::{Index, IndexMut};
 use Vez::{O, V, X, Z};
 
@@ -48,7 +49,7 @@ pub const POW3: [usize; 10] = [
 ];
 
 /// Um valor no tabuleiro, a vez do Jogador ou o resultado do jogo
-#[derive(Eq, PartialEq, Clone, Copy)]
+#[derive(Eq, PartialEq, Clone, Copy, Debug)]
 pub enum Vez {
     /// Tabuleiro: Espaço vazio
     /// Vez:       -
@@ -130,7 +131,7 @@ impl Jogo {
         Jogo { jogo: [Z; 9] }
     }
 
-    pub const fn crair_com(jogo: [Vez; 9]) -> Jogo {
+    pub const fn criar_com(jogo: [Vez; 9]) -> Jogo {
         Jogo { jogo }
     }
 
@@ -144,10 +145,10 @@ impl Jogo {
 
     pub fn minimo(&self) -> usize {
         let mut minimo = usize::MAX;
-        for i in SIMETRIAS_REVERSA.iter() {
+        for sim in SIMETRIAS_REVERSA.iter() {
             let mut numero = 0;
-            for j in 0..i.len() {
-                numero += self[j].num() * POW3[j];
+            for i in 0..sim.len() {
+                numero += self[sim[i]].num() * POW3[i];
             }
             minimo = minimo.min(numero);
         }
@@ -182,13 +183,13 @@ impl Jogo {
     }
 
     pub fn resultado(&self) -> Vez {
-        for &(a, b, c) in VITORIAS.iter() {
-            if self[a] == Z && self[a] == self[b] && self[b] == self[c] {
+        for &(a, b, c) in &VITORIAS {
+            if self[a] != Z && self[a] == self[b] && self[b] == self[c] {
                 return self[a];
             }
         }
 
-        for &i in self.jogo.iter() {
+        for &i in &self.jogo {
             if i == Z {
                 return Z;
             }
@@ -198,29 +199,42 @@ impl Jogo {
     }
 
     pub fn possibilidades() -> Vec<Jogo> {
-        fn rec_possibilidades(jogos: &mut Vec<Jogo>, vez: Vez) {
+        fn rec_possibilidades(jogos: &mut Vec<Jogo>, atual: Jogo, vez: Vez) {
             for i in 0..9 {
-                let atual = jogos.last().unwrap();
-                if let Z = atual[i] {
-                    continue;
-                }
-
-                let mut novo = atual.clone();
-                novo[i] = vez;
-                if !novo.resultado().venceu_ou_velha() {
-                    jogos.push(novo);
-                    rec_possibilidades(jogos, vez.trocar());
+                if atual[i] == Z {
+                    let mut novo = atual.clone();
+                    novo[i] = vez;
+                    if !novo.resultado().venceu_ou_velha() {
+                        jogos.push(novo.clone());
+                        rec_possibilidades(jogos, novo, vez.trocar());
+                    }
                 }
             }
         }
 
-        let mut jogos: Vec<Jogo> = vec![Jogo::criar()];
-        rec_possibilidades(&mut jogos, X);
+        let atual = Jogo::criar();
+        let mut jogos: Vec<Jogo> = vec![atual.clone()];
+        rec_possibilidades(&mut jogos, atual, X);
         jogos
     }
 
     pub const fn len(&self) -> usize {
         9
+    }
+}
+
+impl Debug for Jogo {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        for i in 0..self.len() {
+            match self[i] {
+                Z => write!(f, "Z")?,
+                X => write!(f, "X")?,
+                O => write!(f, "O")?,
+                V => write!(f, "V")?,
+            }
+        }
+        write!(f, " => {} ({})", self.numero(), self.minimo())?;
+        Ok(())
     }
 }
 
