@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "util.h"
 
-
 // extern int simetrias[8][9];
 extern byte simetrias_reversa[8][9];
 extern byte vitorias[8][3];
