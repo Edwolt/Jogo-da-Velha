@@ -1,4 +1,4 @@
-use rand::{self, prelude::ThreadRng, Rng};
+use rand::{self, Rng};
 use std::fs::{self, File};
 use std::io::Result;
 use std::io::{BufWriter, Write};
@@ -8,7 +8,7 @@ use crate::jogo::{Jogo, Vez, SIMETRIAS, SIMETRIAS_REVERSA};
 use crate::mapa::Mapa;
 
 pub struct Solucao {
-    cromossomo: Vec<Option<u8>>,
+    pub cromossomo: Vec<Option<u8>>,
 }
 
 impl Solucao {
@@ -18,7 +18,7 @@ impl Solucao {
         }
     }
 
-    pub fn criar_random(tam: usize) -> Solucao {
+    pub fn random(tam: usize) -> Solucao {
         let mut random = rand::thread_rng();
 
         let mut cromossomo: Vec<Option<u8>> = Vec::with_capacity(tam);
@@ -65,8 +65,8 @@ impl Solucao {
         let jogos = Jogo::possibilidades();
         for j in jogos {
             let mut jogada = self.get_jogada(mapa, &j);
-            if jogada.is_none() || j[jogada.unwrap() as usize] != Vez::Z {
-                while j[jogada.unwrap() as usize] != Vez::Z {
+            if jogada.is_none() || j.data[jogada.unwrap() as usize] != Vez::Z {
+                while j.data[jogada.unwrap() as usize] != Vez::Z {
                     jogada = Some(random.gen_range(0..9));
                 }
                 self.set_jogada(mapa, &j, jogada);
@@ -77,7 +77,7 @@ impl Solucao {
     pub fn get_jogada(&self, mapa: &Mapa, jogo: &Jogo) -> Option<u8> {
         let sim = jogo.simetria();
         let num = jogo.numero() as usize;
-        let gene = mapa[num].unwrap();
+        let gene = mapa.data[num].unwrap();
         let jogada = self[gene].unwrap() as usize;
 
         Some(SIMETRIAS_REVERSA[sim][jogada])
@@ -86,7 +86,7 @@ impl Solucao {
     pub fn set_jogada(&mut self, mapa: &Mapa, jogo: &Jogo, jogada: Option<u8>) {
         let sim = jogo.simetria() as usize;
         let num = jogo.numero() as usize;
-        let gene = mapa[num].unwrap();
+        let gene = mapa.data[num].unwrap();
 
         let jogada = jogada.unwrap() as usize;
         let jogada = SIMETRIAS[sim][jogada];

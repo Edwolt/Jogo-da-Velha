@@ -1,5 +1,4 @@
 use std::fmt::{Debug, Formatter};
-use std::ops::{Index, IndexMut};
 
 pub const SIMETRIAS: [[u8; 9]; 8] = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
@@ -122,42 +121,83 @@ impl Vez {
 
 #[derive(Clone)]
 pub struct Jogo {
-    jogo: [Vez; 9],
+    pub data: [Vez; 9],
+    pub vez: Vez,
 }
 
 impl Jogo {
     pub const fn criar() -> Jogo {
-        Jogo { jogo: [Vez::Z; 9] }
+        Jogo {
+            data: [Vez::Z; 9],
+            vez: Vez::X,
+        }
     }
 
     pub const fn criar_com(jogo: [Vez; 9]) -> Jogo {
-        Jogo { jogo }
+        const fn proximo_jogador(jogo: [Vez; 9]) -> Vez {
+            let mut x: u8 = 0;
+            let mut o: u8 = 0;
+
+            // for vez in &jogo {
+            //     match vez {
+            //         Vez::X => x += 1,
+            //         Vez::O => o += 1,
+            //         _ => (),
+            //     }
+            // }
+            let mut i: usize = 0;
+            while i < jogo.len() {
+                let vez = jogo[i];
+                match vez {
+                    Vez::X => x += 1,
+                    Vez::O => o += 1,
+                    _ => (),
+                }
+
+                i += 1;
+            }
+
+            if x == 0 {
+                Vez::X
+            } else {
+                Vez::O
+            }
+        }
+
+        Jogo {
+            data: jogo,
+            vez: proximo_jogador(jogo),
+        }
     }
 
     pub fn numero(&self) -> u32 {
         let mut numero = 0;
-        for i in 0..self.len() {
+
+        for (i, jogada) in self.data.iter().enumerate() {
             numero += {
-                let num = self[i].num() as u32;
+                let num = jogada.num() as u32;
                 num * POW3[i]
             };
         }
+
         numero
     }
 
     pub fn minimo(&self) -> u32 {
         let mut minimo = u32::MAX;
+
         for sim in SIMETRIAS_REVERSA.iter() {
             let mut numero = 0;
-            for i in 0..sim.len() {
+            for (i, &idx) in sim.iter().enumerate() {
                 numero += {
-                    let idx = sim[i] as usize;
-                    let num = self[idx] as u32;
+                    let idx = idx as usize;
+                    let num = (self.data[idx as usize].num() as u32) * POW3[i];
                     num * POW3[i]
                 };
             }
             minimo = minimo.min(numero);
         }
+
         minimo
     }
 
@@ -165,12 +205,12 @@ impl Jogo {
         let mut minimo = u32::MAX;
         let mut simetria = 0;
 
-        for i in 0..SIMETRIAS_REVERSA.len() {
+        for (i, sim) in SIMETRIAS_REVERSA.iter().enumerate() {
             let mut numero = 0;
-            for j in 0..SIMETRIAS_REVERSA[i].len() {
+            for &idx in sim {
                 numero += {
-                    let idx = SIMETRIAS_REVERSA[i][j] as usize;
-                    let num = self[idx].num() as u32;
+                    let idx = idx as usize;
+                    let num = self.data[idx].num() as u32;
                     num * POW3[i]
                 };
             }
@@ -186,13 +226,15 @@ impl Jogo {
 
     pub fn valor(&self, simetria: usize) -> u32 {
         let mut numero = 0;
-        for i in 0..self.len() {
+
+        for (i, &idx) in SIMETRIAS_REVERSA[simetria].iter().enumerate() {
             numero += {
-                let idx = SIMETRIAS_REVERSA[simetria][i] as usize;
-                let num = self[idx].num() as u32;
+                let idx = idx as usize;
+                let num = self.data[idx].num() as u32;
                 num * POW3[i]
             };
         }
+
         numero
     }
 
@@ -202,12 +244,15 @@ impl Jogo {
             let b = b as usize;
             let c = c as usize;
 
-            if self[a] != Vez::Z && self[a] == self[b] && self[b] == self[c] {
-                return self[a];
+            if self.data[a] != Vez::Z
+                && self.data[a] == self.data[b]
+                && self.data[b] == self.data[c]
+            {
+                return self.data[a];
             }
         }
 
-        for &i in &self.jogo {
+        for &i in &self.data {
             if i == Vez::Z {
                 return Vez::Z;
             }
@@ -217,14 +262,14 @@ impl Jogo {
     }
 
     pub fn possibilidades() -> Vec<Jogo> {
-        fn rec_possibilidades(jogos: &mut Vec<Jogo>, atual: Jogo, vez: Vez) {
-            for i in 0..9 {
-                if atual[i] == Vez::Z {
+        fn rec_possibilidades(jogos: &mut Vec<Jogo>, atual: Jogo) {
+            for i in 0..atual.data.len() {
+                if atual.data[i] == Vez::Z {
                     let mut novo = atual.clone();
-                    novo[i] = vez;
+                    novo.jogar(i);
                     if !novo.resultado().venceu_ou_velha() {
                         jogos.push(novo.clone());
-                        rec_possibilidades(jogos, novo, vez.trocar());
+                        rec_possibilidades(jogos, novo);
                     }
                 }
             }
@@ -232,19 +277,20 @@ impl Jogo {
 
         let atual = Jogo::criar();
         let mut jogos: Vec<Jogo> = vec![atual.clone()];
-        rec_possibilidades(&mut jogos, atual, Vez::X);
+        rec_possibilidades(&mut jogos, atual);
         jogos
     }
 
-    pub const fn len(&self) -> usize {
-        9
+    pub fn jogar(&mut self, jogada: usize) {
+        self.data[jogada] = self.vez;
+        self.vez = self.vez.trocar();
     }
 }
 
 impl Debug for Jogo {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        for i in 0..self.len() {
-            match self[i] {
+        for vez in &self.data {
+            match vez {
                 Vez::Z => write!(f, "Z")?,
                 Vez::X => write!(f, "X")?,
                 Vez::O => write!(f, "O")?,
@@ -253,18 +299,5 @@ impl Debug for Jogo {
         }
         write!(f, " => {} ({})", self.numero(), self.minimo())?;
         Ok(())
-    }
-}
-
-impl Index<usize> for Jogo {
-    type Output = Vez;
-    fn index(&self, i: usize) -> &Vez {
-        &self.jogo[i]
-    }
-}
-
-impl IndexMut<usize> for Jogo {
-    fn index_mut(&mut self, i: usize) -> &mut Vez {
-        &mut self.jogo[i]
     }
 }

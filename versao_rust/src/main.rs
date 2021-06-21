@@ -29,7 +29,7 @@ fn main() {
                 mapa.salvar("mapa.txt").expect("Falha ao salvar mapa");
 
                 println!("Mapa salvo em mapa.txt");
-                println!("Tamanho do mapa: {}", mapa.len());
+                println!("Tamanho do mapa: {}", mapa.data.len());
                 println!("Tamanho do cromossomo: {}", mapa.tam_cromossomo());
             }
             _ => break,

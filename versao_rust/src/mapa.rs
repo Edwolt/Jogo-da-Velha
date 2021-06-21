@@ -1,14 +1,13 @@
 use std::fs::{self, File};
 use std::io::Result;
 use std::io::{BufWriter, Write};
-use std::ops::{Index, IndexMut};
 
 use crate::jogo::Jogo;
 
 #[derive(Debug)]
 pub struct Mapa {
-    mapa: Vec<Option<usize>>,
-    tam_cromossomo: usize,
+    pub data: Vec<Option<usize>>,
+    pub tam_cromossomo: usize,
 }
 
 impl Mapa {
@@ -54,16 +53,16 @@ impl Mapa {
         mapa.resize(tam_mapa, None);
 
         Mapa {
-            mapa,
+            data: mapa,
             tam_cromossomo,
         }
     }
 
     pub fn salvar(&self, path: &str) -> Result<()> {
         let mut arquivo = BufWriter::new(File::create(path)?);
-        writeln!(&mut arquivo, "{} {}", self.mapa.len(), self.tam_cromossomo)?;
+        writeln!(&mut arquivo, "{} {}", self.data.len(), self.tam_cromossomo)?;
 
-        for &i in &self.mapa {
+        for &i in &self.data {
             let m = match i {
                 None => -1,
                 Some(i) => i as isize,
@@ -103,29 +102,12 @@ impl Mapa {
         }
 
         Ok(Mapa {
-            mapa,
+            data: mapa,
             tam_cromossomo,
         })
     }
 
-    pub fn len(&self) -> usize {
-        self.mapa.len()
-    }
-
     pub fn tam_cromossomo(&self) -> usize {
         self.tam_cromossomo
-    }
-}
-
-impl Index<usize> for Mapa {
-    type Output = Option<usize>;
-    fn index(&self, i: usize) -> &Option<usize> {
-        &self.mapa[i]
-    }
-}
-
-impl IndexMut<usize> for Mapa {
-    fn index_mut(&mut self, i: usize) -> &mut Option<usize> {
-        &mut self.mapa[i]
     }
 }
