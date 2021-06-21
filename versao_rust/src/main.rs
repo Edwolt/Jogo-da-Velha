@@ -1,8 +1,10 @@
-use std::io;
-
 mod jogo;
 mod mapa;
+mod minmax;
 mod solucao;
+
+use std::io;
+
 use crate::mapa::Mapa;
 
 fn main() {
