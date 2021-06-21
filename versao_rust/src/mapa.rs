@@ -75,7 +75,7 @@ impl Mapa {
 
     pub fn carregar(path: &str) -> Result<Mapa> {
         let conteudo = fs::read_to_string(path)?;
-        let mut conteudo = conteudo.split("\n");
+        let mut conteudo = conteudo.trim().split("\n");
 
         let mut tupla = conteudo.next().expect("Mapa vazio").trim().split(" ");
         let tam_mapa = tupla

@@ -1,6 +1,6 @@
 use crate::jogo::{Jogo, Vez};
 
-pub fn minmax(jogo: Jogo) -> u8 {
+pub fn minmax(jogo: &Jogo) -> u8 {
     fn rec_minmax(jogo: &Jogo, maximizador: Vez) -> i8 {
         match jogo.resultado() {
             Vez::V => return 0,

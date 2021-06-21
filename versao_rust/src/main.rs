@@ -5,7 +5,10 @@ mod solucao;
 
 use std::io;
 
+use crate::jogo::Jogo;
 use crate::mapa::Mapa;
+use crate::minmax::minmax;
+use crate::solucao::Solucao;
 
 fn main() {
     loop {
@@ -25,7 +28,7 @@ fn main() {
 
         match option {
             0 => break,
-            1 | 3 | 4 => println!("Não implementado ainda"),
+            1 | 4 => println!("Não implementado ainda"),
             2 => {
                 let mapa = Mapa::criar();
                 mapa.salvar("mapa.txt").expect("Falha ao salvar mapa");
@@ -33,6 +36,18 @@ fn main() {
                 println!("Mapa salvo em mapa.txt");
                 println!("Tamanho do mapa: {}", mapa.data.len());
                 println!("Tamanho do cromossomo: {}", mapa.tam_cromossomo());
+            }
+            3 => {
+                let mapa = Mapa::carregar("mapa.txt").expect("Falha ao carregar mapa");
+                let jogos = Jogo::possibilidades();
+                let mut solucao = Solucao::criar(mapa.tam_cromossomo);
+
+                for j in jogos {
+                    solucao.set_jogada(&mapa, &j, Some(minmax(&j)));
+                }
+
+                solucao.salvar("minmax.txt").expect("Falha ao salvar mapa");
+                println!("Solução salva em minmax.txt");
             }
             _ => break,
         }
