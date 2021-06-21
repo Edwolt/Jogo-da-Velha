@@ -1,8 +1,9 @@
-use crate::jogo::Jogo;
-use std::fs;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::Result;
 use std::io::{BufWriter, Write};
+use std::ops::{Index, IndexMut};
+
+use crate::jogo::Jogo;
 
 #[derive(Debug)]
 pub struct Mapa {
@@ -20,13 +21,11 @@ impl Mapa {
         let jogos = Jogo::possibilidades();
 
         // [M] 0..M -> 0..N
-        let minimos: Vec<usize> = jogos.iter().map(|i| i.minimo()).collect();
+        let minimos: Vec<u32> = jogos.iter().map(|i| i.minimo()).collect();
 
         // [N]
         let mut freq = vec![false; 3usize.pow(9)];
-        for &i in &minimos {
-            freq[i] = true;
-        }
+        minimos.iter().for_each(|&i| freq[i as usize] = true);
 
         let tam_cromossomo: usize = freq
             .iter()
@@ -46,8 +45,8 @@ impl Mapa {
         let mut tam_mapa = usize::MIN;
         let mut mapa = vec![None; 3usize.pow(9)];
         for i in &jogos {
-            let num = i.numero();
-            mapa[num] = mapa_min[i.minimo()];
+            let num = i.numero() as usize;
+            mapa[num] = mapa_min[i.minimo() as usize];
             tam_mapa = tam_mapa.max(num);
         }
         tam_mapa += 1; // Tem que incluir o maior também
@@ -95,9 +94,10 @@ impl Mapa {
 
         let mut mapa: Vec<Option<usize>> = Vec::with_capacity(tam_mapa);
         for dado in conteudo {
-            let dado = match dado.trim().parse::<isize>().expect("Mapa invalido") {
+            let dado = dado.trim().parse::<isize>().expect("Mapa invalido");
+            let dado = match dado {
                 -1 => None,
-                n @ _ => Some(n as usize),
+                n => Some(n as usize),
             };
             mapa.push(dado);
         }
@@ -114,5 +114,18 @@ impl Mapa {
 
     pub fn tam_cromossomo(&self) -> usize {
         self.tam_cromossomo
+    }
+}
+
+impl Index<usize> for Mapa {
+    type Output = Option<usize>;
+    fn index(&self, i: usize) -> &Option<usize> {
+        &self.mapa[i]
+    }
+}
+
+impl IndexMut<usize> for Mapa {
+    fn index_mut(&mut self, i: usize) -> &mut Option<usize> {
+        &mut self.mapa[i]
     }
 }

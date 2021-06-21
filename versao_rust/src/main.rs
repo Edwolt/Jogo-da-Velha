@@ -1,9 +1,9 @@
-mod jogo;
-mod mapa;
-
 use std::io;
 
-use mapa::Mapa;
+mod jogo;
+mod mapa;
+mod solucao;
+use crate::mapa::Mapa;
 
 fn main() {
     loop {
