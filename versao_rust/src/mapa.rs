@@ -78,12 +78,12 @@ impl Mapa {
         let mut conteudo = conteudo.trim().split("\n");
 
         let mut tupla = conteudo.next().expect("Mapa vazio").trim().split(" ");
-        let tam_mapa = tupla
-            .next()
-            .expect("Mapa invalido")
-            .trim()
-            .parse::<usize>()
-            .expect("Mapa invalido");
+        // let tam_mapa = tupla
+        //     .next()
+        //     .expect("Mapa invalido")
+        //     .trim()
+        //     .parse::<usize>()
+        //     .expect("Mapa invalido");
         let tam_cromossomo = tupla
             .next()
             .expect("Mapa invalido")
@@ -91,15 +91,15 @@ impl Mapa {
             .parse::<usize>()
             .expect("Mapa invalido");
 
-        let mut mapa: Vec<Option<usize>> = Vec::with_capacity(tam_mapa);
-        for dado in conteudo {
-            let dado = dado.trim().parse::<isize>().expect("Mapa invalido");
-            let dado = match dado {
-                -1 => None,
-                n => Some(n as usize),
-            };
-            mapa.push(dado);
-        }
+        let mapa: Vec<Option<usize>> = conteudo
+            .map(|dado| {
+                let dado = dado.trim().parse::<isize>().expect("Mapa invalido");
+                match dado {
+                    -1 => None,
+                    n => Some(n as usize),
+                }
+            })
+            .collect();
 
         Ok(Mapa {
             data: mapa,

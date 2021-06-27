@@ -147,8 +147,7 @@ impl Jogo {
             // }
             let mut i: usize = 0;
             while i < jogo.len() {
-                let vez = jogo[i];
-                match vez {
+                match jogo[i] {
                     Vez::X => x += 1,
                     Vez::O => o += 1,
                     _ => (),
@@ -157,7 +156,7 @@ impl Jogo {
                 i += 1;
             }
 
-            if x == 0 {
+            if x == o {
                 Vez::X
             } else {
                 Vez::O
@@ -171,34 +170,24 @@ impl Jogo {
     }
 
     pub fn numero(&self) -> u32 {
-        let mut numero = 0;
-
-        for (i, jogada) in self.data.iter().enumerate() {
-            numero += {
-                let num = jogada.num() as u32;
-                num * POW3[i]
-            };
-        }
-
-        numero
+        self.data.iter().enumerate().fold(0, |acc, (i, jogada)| {
+            let num = jogada.num() as u32;
+            let res = num * POW3[i];
+            acc + res
+        })
     }
 
     pub fn minimo(&self) -> u32 {
-        let mut minimo = u32::MAX;
+        SIMETRIAS_REVERSA.iter().fold(u32::MAX, |minimo, sim| {
+            let numero = sim.iter().enumerate().fold(0, |acc, (i, &idx)| {
+                let idx = idx as usize;
+                let num = (self.data[idx as usize].num() as u32) * POW3[i];
+                let res = num * POW3[i];
+                acc + res
+            });
 
-        for sim in SIMETRIAS_REVERSA.iter() {
-            let mut numero = 0;
-            for (i, &idx) in sim.iter().enumerate() {
-                numero += {
-                    let idx = idx as usize;
-                    let num = (self.data[idx as usize].num() as u32) * POW3[i];
-                    num * POW3[i]
-                };
-            }
-            minimo = minimo.min(numero);
-        }
-
-        minimo
+            minimo.min(numero)
+        })
     }
 
     pub fn simetria(&self) -> usize {
@@ -206,14 +195,12 @@ impl Jogo {
         let mut simetria = 0;
 
         for (i, sim) in SIMETRIAS_REVERSA.iter().enumerate() {
-            let mut numero = 0;
-            for &idx in sim {
-                numero += {
-                    let idx = idx as usize;
-                    let num = self.data[idx].num() as u32;
-                    num * POW3[i]
-                };
-            }
+            let numero = sim.iter().fold(0, |acc, &idx| {
+                let idx = idx as usize;
+                let num = self.data[idx].num() as u32;
+                let res = num * POW3[i];
+                acc + res
+            });
 
             if numero < minimo {
                 minimo = numero;
@@ -225,17 +212,15 @@ impl Jogo {
     }
 
     pub fn valor(&self, simetria: usize) -> u32 {
-        let mut numero = 0;
-
-        for (i, &idx) in SIMETRIAS_REVERSA[simetria].iter().enumerate() {
-            numero += {
+        SIMETRIAS_REVERSA[simetria]
+            .iter()
+            .enumerate()
+            .fold(0, |acc, (i, &idx)| {
                 let idx = idx as usize;
                 let num = self.data[idx].num() as u32;
-                num * POW3[i]
-            };
-        }
-
-        numero
+                let res = num * POW3[i];
+                acc + res
+            })
     }
 
     pub fn resultado(&self) -> Vez {

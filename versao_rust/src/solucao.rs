@@ -20,12 +20,9 @@ impl Solucao {
 
     pub fn random(tam: usize) -> Solucao {
         let mut random = rand::thread_rng();
-
-        let mut cromossomo: Vec<Option<u8>> = Vec::with_capacity(tam);
-        for _ in 0..tam {
-            cromossomo.push(Some(random.gen_range(0..9)));
+        Solucao {
+            cromossomo: (0..tam).map(|_| Some(random.gen_range(0..9))).collect(),
         }
-        Solucao { cromossomo }
     }
 
     pub fn salvar(&self, path: &str) -> Result<()> {
@@ -42,20 +39,18 @@ impl Solucao {
         Ok(())
     }
 
-    pub fn carregar(&self, path: &str, tam_cromossomo: usize) -> Result<Solucao> {
+    pub fn carregar(&self, path: &str, _tam_cromossomo: usize) -> Result<Solucao> {
         let conteudo = fs::read_to_string(path)?;
-        let conteudo = conteudo.split("\n");
-
-        let mut cromossomo: Vec<Option<u8>> = Vec::with_capacity(tam_cromossomo);
-        for dado in conteudo {
-            let dado = dado.trim().parse::<isize>().expect("Solução invalida");
-            let dado = match dado {
-                -1 => None,
-                n => Some(n as u8),
-            };
-            cromossomo.push(dado);
-        }
-
+        let cromossomo: Vec<Option<u8>> = conteudo
+            .split("\n")
+            .map(|dado| {
+                let dado = dado.trim().parse::<isize>().expect("Solução invalida");
+                match dado {
+                    -1 => None,
+                    n => Some(n as u8),
+                }
+            })
+            .collect();
         Ok(Solucao { cromossomo })
     }
 
@@ -64,12 +59,13 @@ impl Solucao {
 
         let jogos = Jogo::possibilidades();
         for j in jogos {
-            let mut jogada = self.get_jogada(mapa, &j);
+            let jogada = self.get_jogada(mapa, &j);
             if jogada.is_none() || j.data[jogada.unwrap() as usize] != Vez::Z {
-                while j.data[jogada.unwrap() as usize] != Vez::Z {
-                    jogada = Some(random.gen_range(0..9));
+                let mut jogada: u8 = 0;
+                while j.data[jogada as usize] != Vez::Z {
+                    jogada = random.gen_range(0..9);
                 }
-                self.set_jogada(mapa, &j, jogada);
+                self.set_jogada(mapa, &j, Some(jogada));
             }
         }
     }
