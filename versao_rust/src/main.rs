@@ -1,6 +1,8 @@
+mod individuo;
 mod jogo;
 mod mapa;
 mod minmax;
+mod populacao;
 mod solucao;
 
 use std::io;

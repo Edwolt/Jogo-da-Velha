@@ -81,6 +81,17 @@ impl Vez {
         }
     }
 
+    pub const fn num(self) -> u8 {
+        match self {
+            Vez::Z => 0,
+            Vez::X => 1,
+            Vez::O => 2,
+            Vez::V => 3,
+        }
+    }
+
+    //===== Vez =====//
+
     /// Muda a jogada entre X e O
     pub const fn trocar(self) -> Vez {
         match self {
@@ -90,6 +101,8 @@ impl Vez {
             Vez::V => Vez::V,
         }
     }
+
+    //===== Resultado =====//
 
     pub const fn venceu(self) -> bool {
         match self {
@@ -102,19 +115,10 @@ impl Vez {
         matches!(self, Vez::V)
     }
 
-    pub const fn venceu_ou_velha(self) -> bool {
+    pub const fn terminou(self) -> bool {
         match self {
             Vez::X | Vez::O | Vez::V => true,
             _ => false,
-        }
-    }
-
-    pub const fn num(self) -> u8 {
-        match self {
-            Vez::Z => 0,
-            Vez::X => 1,
-            Vez::O => 2,
-            Vez::V => 3,
         }
     }
 }
@@ -252,7 +256,7 @@ impl Jogo {
                 if atual.data[i] == Vez::Z {
                     let mut novo = atual.clone();
                     novo.jogar(i);
-                    if !novo.resultado().venceu_ou_velha() {
+                    if !novo.resultado().terminou() {
                         jogos.push(novo.clone());
                         rec_possibilidades(jogos, novo);
                     }

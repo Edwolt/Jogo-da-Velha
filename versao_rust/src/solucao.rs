@@ -1,9 +1,11 @@
+use rand::prelude::SliceRandom;
 use rand::{self, Rng};
 use std::fs::{self, File};
 use std::io::Result;
 use std::io::{BufWriter, Write};
 use std::ops::{Index, IndexMut};
 
+use crate::individuo::Individuo;
 use crate::jogo::{Jogo, Vez, SIMETRIAS, SIMETRIAS_REVERSA};
 use crate::mapa::Mapa;
 
@@ -87,6 +89,30 @@ impl Solucao {
         let jogada = jogada.unwrap() as usize;
         let jogada = SIMETRIAS[sim][jogada];
         self[gene] = Some(jogada);
+    }
+
+    pub fn crossover(tam: usize, pai: &Solucao, mae: &Solucao) -> Solucao {
+        let mut random = rand::thread_rng();
+        let cromossomo: Vec<Option<u8>> = pai
+            .cromossomo
+            .iter()
+            .zip(mae.cromossomo.iter())
+            .map(|(&p, &m)| if random.gen_bool(0.5) { p } else { m })
+            .collect();
+        Solucao { cromossomo }
+    }
+
+    pub fn mutacao(&mut self, mutacao: f64) {
+        let mut random = rand::thread_rng();
+        let len = self.cromossomo.len();
+        *self.cromossomo.choose_mut(&mut random).unwrap() = Some(random.gen_range(0..9));
+        // self.cromossomo[random.gen_range(0..len)] = Some(random.gen_range(0..9));
+
+        for i in &mut self.cromossomo {
+            if random.gen_bool(mutacao) {
+                *i = Some(random.gen_range(0..9))
+            }
+        }
     }
 }
 
