@@ -106,8 +106,4 @@ impl Mapa {
             tam_cromossomo,
         })
     }
-
-    pub fn tam_cromossomo(&self) -> usize {
-        self.tam_cromossomo
-    }
 }

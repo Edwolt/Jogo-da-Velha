@@ -5,10 +5,10 @@ use std::io::Result;
 use std::io::{BufWriter, Write};
 use std::ops::{Index, IndexMut};
 
-use crate::individuo::Individuo;
 use crate::jogo::{Jogo, Vez, SIMETRIAS, SIMETRIAS_REVERSA};
 use crate::mapa::Mapa;
 
+#[derive(Clone)]
 pub struct Solucao {
     pub cromossomo: Vec<Option<u8>>,
 }

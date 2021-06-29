@@ -241,13 +241,11 @@ impl Jogo {
             }
         }
 
-        for &i in &self.data {
-            if i == Vez::Z {
-                return Vez::Z;
-            }
+        if self.data.iter().any(|&i| i == Vez::Z) {
+            return Vez::Z;
+        } else {
+            return Vez::V;
         }
-
-        Vez::V
     }
 
     pub fn possibilidades() -> Vec<Jogo> {

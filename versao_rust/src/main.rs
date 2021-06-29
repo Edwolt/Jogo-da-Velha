@@ -37,7 +37,7 @@ fn main() {
 
                 println!("Mapa salvo em mapa.txt");
                 println!("Tamanho do mapa: {}", mapa.data.len());
-                println!("Tamanho do cromossomo: {}", mapa.tam_cromossomo());
+                println!("Tamanho do cromossomo: {}", mapa.tam_cromossomo);
             }
             3 => {
                 let mapa = Mapa::carregar("mapa.txt").expect("Falha ao carregar mapa");

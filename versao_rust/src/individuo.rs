@@ -1,11 +1,11 @@
-use std::borrow::{Borrow, BorrowMut};
-
 use rand::{self, Rng};
+use std::borrow::BorrowMut;
 
 use crate::jogo::{Jogo, Vez};
 use crate::mapa::Mapa;
 use crate::solucao::Solucao;
 
+#[derive(Clone)]
 pub struct Individuo {
     pub solucao: Solucao,
     pub fitness: i32,
