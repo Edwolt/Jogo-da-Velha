@@ -104,11 +104,10 @@ impl Populacao {
         };
         sintese.fitness = self.individuo_fitness(mapa, &mut sintese);
 
-        let ptr = self.pop.iter_mut().nth_back(n - 1).unwrap();
-        *ptr = sintese;
+        *self.pop.iter_mut().nth_back(n + 1).unwrap() = sintese;
     }
 
     pub fn predacao_randomica(&mut self) {
-        todo!()
+        todo!() // TODO
     }
 }

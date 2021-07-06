@@ -84,6 +84,7 @@ impl Mapa {
         //     .trim()
         //     .parse::<usize>()
         //     .expect("Mapa invalido");
+        tupla.next().expect("Mapa invalido"); // tam_mapa
         let tam_cromossomo = tupla
             .next()
             .expect("Mapa invalido")
