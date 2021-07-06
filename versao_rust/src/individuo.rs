@@ -38,17 +38,8 @@ impl Individuo {
                     _ => panic!("Erro Interno: Solução retornou um valor invalido"),
                 };
 
-                let mut jogada = jogador.get_jogada(mapa, &jogo);
-
-                // Corrige jogada
-                if jogada.is_none() || jogo.data[jogada.unwrap() as usize] != Vez::Z {
-                    let mut jogada_: u8 = 0;
-                    while jogo.data[jogada_ as usize] != Vez::Z {
-                        jogada_ = random.gen_range(0..9);
-                    }
-                    jogada = Some(jogada_);
-                    (*jogador).set_jogada(mapa, &jogo, jogada);
-                }
+                let jogada = jogador.get_jogada(mapa, &jogo);
+                let jogada = corrige_jogada(&jogo, mapa, jogador, jogada);
 
                 jogo.jogar(jogada.unwrap() as usize);
             }
@@ -73,5 +64,25 @@ impl Individuo {
 
     pub fn mutacao(&mut self, mutacao: f64) {
         self.solucao.mutacao(mutacao);
+    }
+}
+
+/// Corrige jogada dentro da solução se for necessário, e retorna a nova jogada
+fn corrige_jogada(
+    jogo: &Jogo,
+    mapa: &Mapa,
+    jogador: &mut Solucao,
+    jogada: Option<u8>,
+) -> Option<u8> {
+    if jogada.is_none() || jogo.data[jogada.unwrap() as usize] != Vez::Z {
+        let mut random = rand::thread_rng();
+        let mut jogada: u8 = 0;
+        while jogo.data[jogada as usize] != Vez::Z {
+            jogada = random.gen_range(0..9);
+        }
+        (*jogador).set_jogada(mapa, &jogo, Some(jogada));
+        Some(jogada)
+    } else {
+        jogada
     }
 }

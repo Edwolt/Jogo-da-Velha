@@ -56,19 +56,27 @@ impl Solucao {
         Ok(Solucao { cromossomo })
     }
 
-    pub fn correcao(&mut self, mapa: &Mapa) {
-        let mut random = rand::thread_rng();
+    /// Corrige jogada dentro da solução se for necessário, e retorna a nova jogada
+    pub fn corrige_jogada(&mut self, jogo: &Jogo, mapa: &Mapa, jogada: Option<u8>) -> Option<u8> {
+        if jogada.is_none() || jogo.data[jogada.unwrap() as usize] != Vez::Z {
+            let mut random = rand::thread_rng();
 
+            let mut jogada: u8 = 0;
+            while jogo.data[jogada as usize] != Vez::Z {
+                jogada = random.gen_range(0..9);
+            }
+            self.set_jogada(mapa, &jogo, Some(jogada));
+            Some(jogada)
+        } else {
+            jogada
+        }
+    }
+
+    pub fn correcao(&mut self, mapa: &Mapa) {
         let jogos = Jogo::possibilidades();
         for j in jogos {
             let jogada = self.get_jogada(mapa, &j);
-            if jogada.is_none() || j.data[jogada.unwrap() as usize] != Vez::Z {
-                let mut jogada: u8 = 0;
-                while j.data[jogada as usize] != Vez::Z {
-                    jogada = random.gen_range(0..9);
-                }
-                self.set_jogada(mapa, &j, Some(jogada));
-            }
+            let _ = self.corrige_jogada(&j, mapa, jogada);
         }
     }
 

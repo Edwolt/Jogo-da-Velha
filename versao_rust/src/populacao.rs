@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use rand::prelude::SliceRandom;
 
 use crate::individuo::Individuo;
@@ -107,7 +109,20 @@ impl Populacao {
         *self.pop.iter_mut().nth_back(n + 1).unwrap() = sintese;
     }
 
-    pub fn predacao_randomica(&mut self) {
-        todo!() // TODO
+    pub fn predacao_randomica(&mut self, mapa: &Mapa, n: usize) {
+        let tam = mapa.tam_cromossomo;
+
+        // self.pop.iter_mut().rev().take(n).for_each(|i| {
+        //     let mut ind = Individuo::random(tam);
+        //     ind.fitness = self.individuo_fitness(mapa, &mut ind);
+        //     *i = ind;
+        // });
+
+        // self não pode fazer mais de um borrow_mut()
+        for i in n..self.pop.len() {
+            let mut ind = Individuo::random(tam);
+            ind.fitness = self.individuo_fitness(mapa, &mut ind);
+            self.pop[i] = ind;
+        }
     }
 }
