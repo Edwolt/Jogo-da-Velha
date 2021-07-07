@@ -12,16 +12,16 @@ pub struct Individuo {
 }
 
 impl Individuo {
-    pub fn criar(tam: usize) -> Individuo {
+    pub fn criar(mapa: &Mapa) -> Individuo {
         Individuo {
-            solucao: Solucao::criar(tam),
+            solucao: Solucao::criar(mapa),
             fitness: 0,
         }
     }
 
-    pub fn random(tam: usize) -> Individuo {
+    pub fn random(mapa: &Mapa) -> Individuo {
         Individuo {
-            solucao: Solucao::random(tam),
+            solucao: Solucao::random(mapa),
             fitness: 0,
         }
     }
@@ -39,7 +39,7 @@ impl Individuo {
                 };
 
                 let jogada = jogador.get_jogada(mapa, &jogo);
-                let jogada = corrige_jogada(&jogo, mapa, jogador, jogada);
+                let jogada = jogador.corrige_jogada(mapa, &jogo, jogada);
 
                 jogo.jogar(jogada.unwrap() as usize);
             }
@@ -55,34 +55,14 @@ impl Individuo {
             - solucao_compete(mapa, &mut oponente.solucao, &mut self.solucao)
     }
 
-    pub fn crossover(tam: usize, pai: &Individuo, mae: &Individuo) -> Individuo {
+    pub fn crossover(mapa: &Mapa, pai: &Individuo, mae: &Individuo) -> Individuo {
         Individuo {
-            solucao: Solucao::crossover(tam, &pai.solucao, &mae.solucao),
+            solucao: Solucao::crossover(mapa, &pai.solucao, &mae.solucao),
             fitness: 0,
         }
     }
 
     pub fn mutacao(&mut self, mutacao: f64) {
         self.solucao.mutacao(mutacao);
-    }
-}
-
-/// Corrige jogada dentro da solução se for necessário, e retorna a nova jogada
-fn corrige_jogada(
-    jogo: &Jogo,
-    mapa: &Mapa,
-    jogador: &mut Solucao,
-    jogada: Option<u8>,
-) -> Option<u8> {
-    if jogada.is_none() || jogo.data[jogada.unwrap() as usize] != Vez::Z {
-        let mut random = rand::thread_rng();
-        let mut jogada: u8 = 0;
-        while jogo.data[jogada as usize] != Vez::Z {
-            jogada = random.gen_range(0..9);
-        }
-        (*jogador).set_jogada(mapa, &jogo, Some(jogada));
-        Some(jogada)
-    } else {
-        jogada
     }
 }

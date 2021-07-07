@@ -20,7 +20,7 @@ impl Mapa {
         let jogos = Jogo::possibilidades();
 
         // [M] 0..M -> 0..N
-        let minimos: Vec<u32> = jogos.iter().map(|i| i.minimo()).collect();
+        let minimos: Vec<u32> = jogos.iter().map(|jg| jg.minimo()).collect();
 
         // [N]
         let mut freq = vec![false; 3usize.pow(9)];
@@ -43,9 +43,9 @@ impl Mapa {
         // [N] 0..N -> 0..T
         let mut tam_mapa = usize::MIN;
         let mut mapa = vec![None; 3usize.pow(9)];
-        for i in &jogos {
-            let num = i.numero() as usize;
-            mapa[num] = mapa_min[i.minimo() as usize];
+        for jg in &jogos {
+            let num = jg.numero() as usize;
+            mapa[num] = mapa_min[jg.minimo() as usize];
             tam_mapa = tam_mapa.max(num);
         }
         tam_mapa += 1; // Tem que incluir o maior também

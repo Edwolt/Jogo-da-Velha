@@ -11,9 +11,9 @@ pub struct Populacao {
 }
 
 impl Populacao {
-    pub fn criar(tam: usize, n: usize) -> Populacao {
+    pub fn criar(mapa: &Mapa, n: usize) -> Populacao {
         Populacao {
-            pop: (0..n).map(|_| Individuo::random(tam)).collect(),
+            pop: (0..n).map(|_| Individuo::random(mapa)).collect(),
         }
     }
 
@@ -38,16 +38,18 @@ impl Populacao {
         self.pop.sort_unstable_by_key(|ind| ind.fitness);
     }
 
-    pub fn elitismo(&mut self, tam: usize, populacao: Populacao) {
+    pub fn elitismo(&mut self, mapa: &Mapa, populacao: Populacao) {
         let melhor = &self.pop[0];
         self.pop = self
             .pop
             .iter()
-            .map(|i| Individuo::crossover(tam, melhor, i))
+            .map(|i| Individuo::crossover(mapa, melhor, i))
             .collect();
     }
 
-    pub fn torneio(&mut self, tam: usize) {
+    pub fn torneio(&mut self, mapa: &Mapa) {
+        let tam = mapa.tam_cromossomo;
+
         let mut random = rand::thread_rng();
         self.pop = (0..tam)
             .map(|_| {
@@ -70,7 +72,7 @@ impl Populacao {
                     }
                 };
 
-                Individuo::crossover(tam, pai, mae)
+                Individuo::crossover(mapa, pai, mae)
             })
             .collect();
     }
@@ -110,8 +112,6 @@ impl Populacao {
     }
 
     pub fn predacao_randomica(&mut self, mapa: &Mapa, n: usize) {
-        let tam = mapa.tam_cromossomo;
-
         // self.pop.iter_mut().rev().take(n).for_each(|i| {
         //     let mut ind = Individuo::random(tam);
         //     ind.fitness = self.individuo_fitness(mapa, &mut ind);
@@ -120,7 +120,7 @@ impl Populacao {
 
         // self não pode fazer mais de um borrow_mut()
         for i in n..self.pop.len() {
-            let mut ind = Individuo::random(tam);
+            let mut ind = Individuo::random(mapa);
             ind.fitness = self.individuo_fitness(mapa, &mut ind);
             self.pop[i] = ind;
         }

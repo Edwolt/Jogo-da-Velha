@@ -14,14 +14,18 @@ pub struct Solucao {
 }
 
 impl Solucao {
-    pub fn criar(tam: usize) -> Solucao {
+    pub fn criar(mapa: &Mapa) -> Solucao {
+        let tam = mapa.tam_cromossomo;
+
         Solucao {
             cromossomo: vec![Some(0); tam],
         }
     }
 
-    pub fn random(tam: usize) -> Solucao {
+    pub fn random(mapa: &Mapa) -> Solucao {
+        let tam = mapa.tam_cromossomo;
         let mut random = rand::thread_rng();
+
         Solucao {
             cromossomo: (0..tam).map(|_| Some(random.gen_range(0..9))).collect(),
         }
@@ -41,7 +45,7 @@ impl Solucao {
         Ok(())
     }
 
-    pub fn carregar(&self, path: &str, _tam_cromossomo: usize) -> Result<Solucao> {
+    pub fn carregar(&self, _mapa: &Mapa, path: &str) -> Result<Solucao> {
         let conteudo = fs::read_to_string(path)?;
         let cromossomo: Vec<Option<u8>> = conteudo
             .split("\n")
@@ -57,7 +61,7 @@ impl Solucao {
     }
 
     /// Corrige jogada dentro da solução se for necessário, e retorna a nova jogada
-    pub fn corrige_jogada(&mut self, jogo: &Jogo, mapa: &Mapa, jogada: Option<u8>) -> Option<u8> {
+    pub fn corrige_jogada(&mut self, mapa: &Mapa, jogo: &Jogo, jogada: Option<u8>) -> Option<u8> {
         if jogada.is_none() || jogo.data[jogada.unwrap() as usize] != Vez::Z {
             let mut random = rand::thread_rng();
 
@@ -74,9 +78,9 @@ impl Solucao {
 
     pub fn correcao(&mut self, mapa: &Mapa) {
         let jogos = Jogo::possibilidades();
-        for j in jogos {
-            let jogada = self.get_jogada(mapa, &j);
-            let _ = self.corrige_jogada(&j, mapa, jogada);
+        for jg in jogos {
+            let jogada = self.get_jogada(mapa, &jg);
+            let _ = self.corrige_jogada(mapa, &jg, jogada);
         }
     }
 
@@ -99,8 +103,10 @@ impl Solucao {
         self[gene] = Some(jogada);
     }
 
-    pub fn crossover(tam: usize, pai: &Solucao, mae: &Solucao) -> Solucao {
+    pub fn crossover(mapa: &Mapa, pai: &Solucao, mae: &Solucao) -> Solucao {
+        let tam = mapa.tam_cromossomo;
         let mut random = rand::thread_rng();
+
         let cromossomo: Vec<Option<u8>> = pai
             .cromossomo
             .iter()
