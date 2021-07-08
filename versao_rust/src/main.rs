@@ -52,6 +52,7 @@ fn opcao_jogar() {
         .expect("Não foi possível rodar o jogo em python");
 }
 
+
 fn opcao_mapa() {
     let mapa = Mapa::criar();
     mapa.salvar("mapa.txt").expect("Falha ao salvar mapa");
@@ -62,6 +63,8 @@ fn opcao_mapa() {
 }
 
 fn opcao_minmax() {
+    // TODO Não está funcionando como deveria
+
     let mapa = Mapa::carregar("mapa.txt").expect("Falha ao carregar mapa");
     let jogos = Jogo::possibilidades();
     let mut solucao = Solucao::criar(&mapa);
@@ -77,6 +80,8 @@ fn opcao_minmax() {
 }
 
 fn opcao_evolutivo() {
+    // TODO Não está funcionando como deveria
+
     const N: usize = 200;
     const PREDADOS: usize = 2;
     const PERIODO_PREDACAO: u128 = 25;

@@ -7,10 +7,17 @@ use crate::jogo::Jogo;
 #[derive(Debug)]
 pub struct Mapa {
     pub data: Vec<Option<usize>>,
+
+    /// Tamanho do cromossomo de mapa
     pub tam_cromossomo: usize,
 }
 
 impl Mapa {
+    /// Gera um mapa e salva em mapa.txt
+    ///
+    /// Esse mapa serve para mapear todos os possivei jogos
+    /// eliminando jogos simetricos e fazendo com que o vetor
+    /// com todas as jogadas a ser feita seja menor
     pub fn criar() -> Mapa {
         // Considere M o número de jogos possíveis
         // Considere N o número arranjos de Z, X e O
@@ -58,6 +65,7 @@ impl Mapa {
         }
     }
 
+    /// Salva mapa em uma arquivo em path
     pub fn salvar(&self, path: &str) -> Result<()> {
         let mut arquivo = BufWriter::new(File::create(path)?);
         writeln!(&mut arquivo, "{} {}", self.data.len(), self.tam_cromossomo)?;
@@ -73,18 +81,21 @@ impl Mapa {
         Ok(())
     }
 
+    /// Carrega o mapa e retorna ele
     pub fn carregar(path: &str) -> Result<Mapa> {
         let conteudo = fs::read_to_string(path)?;
         let mut conteudo = conteudo.trim().split("\n");
 
         let mut tupla = conteudo.next().expect("Mapa vazio").trim().split(" ");
-        // let tam_mapa = tupla
+
+        // let _tam_mapa = tupla
         //     .next()
         //     .expect("Mapa invalido")
         //     .trim()
         //     .parse::<usize>()
         //     .expect("Mapa invalido");
-        tupla.next().expect("Mapa invalido"); // tam_mapa
+        tupla.next().expect("Mapa invalido"); // ignora tam_mapa
+
         let tam_cromossomo = tupla
             .next()
             .expect("Mapa invalido")

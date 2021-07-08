@@ -1,6 +1,13 @@
 use crate::jogo::{Jogo, Vez};
 
+/// * Retorna entre as jogadas possíveis uma que resultará em vitória
+/// * Senão pelo menos uma que resultará em empate
+/// * Senão retorna uma entre as jogadas disponíveis
 pub fn minmax(jogo: &Jogo) -> u8 {
+    /// Retorna se aquela jogada resultará em:
+    /// * Vitória: 1
+    /// * Empate: 0
+    /// * Derrota: -1
     fn rec_minmax(jogo: &Jogo, maximizador: Vez) -> i8 {
         match jogo.resultado() {
             Vez::V => return 0,

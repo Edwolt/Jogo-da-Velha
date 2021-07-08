@@ -1,10 +1,13 @@
-use rand::{self, Rng};
 use std::borrow::BorrowMut;
 
 use crate::jogo::{Jogo, Vez};
 use crate::mapa::Mapa;
 use crate::solucao::Solucao;
 
+/// Armazena dados do indivíduo
+/// incluindo a solução e outros dados pertinentes
+///
+/// Possui metodos para ser indivíduo do algoritmo evolutivo
 #[derive(Clone)]
 pub struct Individuo {
     pub solucao: Solucao,
@@ -19,6 +22,7 @@ impl Individuo {
         }
     }
 
+    /// Cria indivíduo com valores aleatórios
     pub fn random(mapa: &Mapa) -> Individuo {
         Individuo {
             solucao: Solucao::random(mapa),
@@ -26,9 +30,10 @@ impl Individuo {
         }
     }
 
+    /// Faz dois inviduos jogar atualizando o fitness deles
     pub fn compete(&mut self, mapa: &Mapa, oponente: &mut Individuo) -> i32 {
+        /// Faz duas soluções competir retornando o resultado
         fn solucao_compete(mapa: &Mapa, jogador_x: &mut Solucao, jogador_o: &mut Solucao) -> i32 {
-            let mut random = rand::thread_rng();
             let mut jogo: Jogo = Jogo::criar();
 
             while !jogo.resultado().terminou() {
@@ -55,6 +60,8 @@ impl Individuo {
             - solucao_compete(mapa, &mut oponente.solucao, &mut self.solucao)
     }
 
+    /// Cria um novo indivíduo
+    /// com um mistrura das características do pai e da mae
     pub fn crossover(mapa: &Mapa, pai: &Individuo, mae: &Individuo) -> Individuo {
         Individuo {
             solucao: Solucao::crossover(mapa, &pai.solucao, &mae.solucao),
@@ -62,6 +69,11 @@ impl Individuo {
         }
     }
 
+    /// Aplica mutação no indivíduo
+    ///
+    /// Cada gene tem o valor do parâmetro mutacao de chance de sofrer mutação
+    ///
+    /// É garantido que pelo menos um gene sofrerá mutação
     pub fn mutacao(&mut self, mutacao: f64) {
         self.solucao.mutacao(mutacao);
     }

@@ -1,5 +1,8 @@
 use std::fmt::{Debug, Formatter};
 
+/// Pega uma jogada e retorna onde ela seria naquela simetria
+///
+/// jogada -> jogada'
 pub const SIMETRIAS: [[u8; 9]; 8] = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
     [2, 1, 0, 5, 4, 3, 8, 7, 6],
@@ -11,6 +14,10 @@ pub const SIMETRIAS: [[u8; 9]; 8] = [
     [0, 3, 6, 1, 4, 7, 2, 5, 8],
 ];
 
+/// Pega uma jogada em um jogo que passou por simetria e
+/// a tranforma em uma jogada antes de passar pela simtria
+///
+/// jogada <- jogada'
 pub const SIMETRIAS_REVERSA: [[u8; 9]; 8] = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
     [2, 1, 0, 5, 4, 3, 8, 7, 6],
@@ -22,6 +29,7 @@ pub const SIMETRIAS_REVERSA: [[u8; 9]; 8] = [
     [0, 3, 6, 1, 4, 7, 2, 5, 8],
 ];
 
+/// Vetor com todas as opções de vitória
 pub const VITORIAS: [(u8, u8, u8); 8] = [
     (0, 1, 2),
     (3, 4, 5),
@@ -33,6 +41,11 @@ pub const VITORIAS: [(u8, u8, u8); 8] = [
     (2, 4, 6),
 ];
 
+/// Retorna 3 elevado n
+///
+/// ```
+/// POW3[i] = 3u32.pow(i)
+/// ```
 pub const POW3: [u32; 10] = [
     3u32.pow(0),
     3u32.pow(1),
@@ -49,28 +62,29 @@ pub const POW3: [u32; 10] = [
 /// Um valor no tabuleiro, a vez do Jogador ou o resultado do jogo
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
 pub enum Vez {
-    /// Tabuleiro: Espaço vazio
-    /// Vez:       -
-    /// Resultado: Jogo não terminou
+    /// * Tabuleiro: Espaço vazio
+    /// * Vez:       -
+    /// * Resultado: Jogo não terminou
     Z,
 
-    /// Tabuleiro: Jogada do X
-    /// Vez:       Vez do X
-    /// Resultado: Jogador X venceu
+    /// * Tabuleiro: Jogada do X
+    /// * Vez:       Vez do X
+    /// * Resultado: Jogador X venceu
     X,
 
-    /// Tabuleiro: Jogada do O
-    /// Vez:       Vez do O
-    /// Resultado: Jogador O venceu
+    /// * Tabuleiro: Jogada do O
+    /// * Vez:       Vez do O
+    /// * Resultado: Jogador O venceu
     O,
 
-    /// Tabuleiro: -
-    /// Vez:       -
-    /// Resultado: Jogo deu velha
+    /// * Tabuleiro: -
+    /// * Vez:       -
+    /// * Resultado: Jogo deu velha
     V,
 }
 
 impl Vez {
+    /// Retorna a `Vez` correpondente ao número
     pub const fn from_num(val: u8) -> Vez {
         match val {
             0 => Vez::Z,
@@ -81,6 +95,7 @@ impl Vez {
         }
     }
 
+    /// Retorna o número correspondente a `Vez`
     pub const fn num(self) -> u8 {
         match self {
             Vez::Z => 0,
@@ -104,6 +119,7 @@ impl Vez {
 
     //===== Resultado =====//
 
+    /// Retorna se alguém venceu o jogo
     pub const fn venceu(self) -> bool {
         match self {
             Vez::X | Vez::O => true,
@@ -111,10 +127,12 @@ impl Vez {
         }
     }
 
+    /// Retorna se o jogo deu velha
     pub const fn velha(self) -> bool {
         matches!(self, Vez::V)
     }
 
+    /// Retorna se alguém venceu o jogo ou se deu velha
     pub const fn terminou(self) -> bool {
         match self {
             Vez::X | Vez::O | Vez::V => true,
@@ -137,7 +155,9 @@ impl Jogo {
         }
     }
 
+    /// Cria um novo jogo usando o array passado
     pub const fn criar_com(jogo: [Vez; 9]) -> Jogo {
+        /// Calcula qual o próximo jogador a jogar
         const fn proximo_jogador(jogo: [Vez; 9]) -> Vez {
             let mut x: u8 = 0;
             let mut o: u8 = 0;
@@ -173,6 +193,7 @@ impl Jogo {
         }
     }
 
+    /// Retorna o valor do jogo
     pub fn numero(&self) -> u32 {
         self.data.iter().enumerate().fold(0, |acc, (i, jogada)| {
             let num = jogada.num() as u32;
@@ -181,6 +202,7 @@ impl Jogo {
         })
     }
 
+    /// Retorna o menor valor entre os jogos e seus simétricos
     pub fn minimo(&self) -> u32 {
         SIMETRIAS_REVERSA.iter().fold(u32::MAX, |minimo, sim| {
             let numero = sim.iter().enumerate().fold(0, |acc, (i, &idx)| {
@@ -194,6 +216,8 @@ impl Jogo {
         })
     }
 
+    /// Retorna qual a simétria usada
+    /// para que o jogo tenha o menor valor possível
     pub fn simetria(&self) -> usize {
         let mut minimo = u32::MAX;
         let mut simetria = 0;
@@ -215,6 +239,7 @@ impl Jogo {
         simetria
     }
 
+    /// Retorna o valor so jogo na simétria
     pub fn valor(&self, simetria: usize) -> u32 {
         SIMETRIAS_REVERSA[simetria]
             .iter()
@@ -227,6 +252,7 @@ impl Jogo {
             })
     }
 
+    /// Retorna quem venceu o jogo ou se ele ainda está acontecendo
     pub fn resultado(&self) -> Vez {
         for &(a, b, c) in &VITORIAS {
             let a = a as usize;
@@ -248,6 +274,7 @@ impl Jogo {
         }
     }
 
+    /// Retorna um `Vec` de todos os jogos possiveis de acontecer
     pub fn possibilidades() -> Vec<Jogo> {
         fn rec_possibilidades(jogos: &mut Vec<Jogo>, atual: Jogo) {
             for i in 0..atual.data.len() {
@@ -268,6 +295,7 @@ impl Jogo {
         jogos
     }
 
+    /// Faz uma jogada (A struct sabe de quem é vez)
     pub fn jogar(&mut self, jogada: usize) {
         self.data[jogada] = self.vez;
         self.vez = self.vez.trocar();
@@ -275,6 +303,7 @@ impl Jogo {
 }
 
 impl Debug for Jogo {
+    /// Exibe como está o jogo, `jogo.numero()` e `jogo.minimo()`
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         for vez in &self.data {
             match vez {

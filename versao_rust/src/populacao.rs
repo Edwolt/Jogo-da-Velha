@@ -1,11 +1,13 @@
-use std::borrow::BorrowMut;
-
 use rand::prelude::SliceRandom;
 
 use crate::individuo::Individuo;
 use crate::mapa::Mapa;
 use crate::solucao::Solucao;
 
+/// Armazena uma conjunto de soluções,
+/// onde cada solução é um indivíduo da população
+///
+/// Possui metódos para ser população do algoritmo evolutivo
 pub struct Populacao {
     pub pop: Vec<Individuo>,
 }
@@ -17,12 +19,15 @@ impl Populacao {
         }
     }
 
+    /// Calcula o fitness do indivíduo em relação à população
     fn individuo_fitness(&mut self, mapa: &Mapa, individuo: &mut Individuo) -> i32 {
         self.pop
             .iter_mut()
             .fold(0, |acc, ind| acc + individuo.compete(mapa, ind))
     }
 
+    /// Calcula o fitness de cada indivíduo da população
+    /// e ordena a população pelo fitness
     pub fn fitness(&mut self, mapa: &Mapa) {
         // for individuo in &mut self.pop {
         //     individuo.fitness = self.individuo_fitness(mapa, individuo);
@@ -38,6 +43,9 @@ impl Populacao {
         self.pop.sort_unstable_by_key(|ind| ind.fitness);
     }
 
+    /// Cria uma nova população usando o metódo elitismo
+    ///
+    /// Considera que o primeiro indivíduo é o melhor de todos
     pub fn elitismo(&mut self, mapa: &Mapa, populacao: Populacao) {
         let melhor = &self.pop[0];
         self.pop = self
@@ -47,6 +55,10 @@ impl Populacao {
             .collect();
     }
 
+    /// Cria uma nova população
+    /// usando o metódo torneio de dois baseado no fitness dos indivíduos
+    ///
+    /// Considera que o primeiro indivíduo é o melhor de todos
     pub fn torneio(&mut self, mapa: &Mapa) {
         let tam = mapa.tam_cromossomo;
 
@@ -77,10 +89,18 @@ impl Populacao {
             .collect();
     }
 
+    /// Aplica mutação na população
+    ///
+    /// Cada gene tem o valor do parâmetro mutação de chance de sofrer mutação
+    ///
+    /// É garantido que pelo menos um gene de cada indivíduo sofrerá mutação
     pub fn mutacao(&mut self, mutacao: f64) {
         self.pop.iter_mut().for_each(|i| i.mutacao(mutacao));
     }
 
+    /// Gera uma nova por predação por síntese
+    /// (indivíduo com os genes mais comuns na população)
+    /// e troca pelo pior de todos exceto os `n` pior que é da predação radômica
     pub fn predacao_sintese(&mut self, mapa: &Mapa, n: usize) {
         let tam = mapa.tam_cromossomo;
 
@@ -111,6 +131,7 @@ impl Populacao {
         *self.pop.iter_mut().nth_back(n + 1).unwrap() = sintese;
     }
 
+    /// Gera n novas soluções aleatórias trocando as piores soluções
     pub fn predacao_randomica(&mut self, mapa: &Mapa, n: usize) {
         // self.pop.iter_mut().rev().take(n).for_each(|i| {
         //     let mut ind = Individuo::random(tam);
