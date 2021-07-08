@@ -52,7 +52,6 @@ fn opcao_jogar() {
         .expect("Não foi possível rodar o jogo em python");
 }
 
-
 fn opcao_mapa() {
     let mapa = Mapa::criar();
     mapa.salvar("mapa.txt").expect("Falha ao salvar mapa");
@@ -113,7 +112,7 @@ fn opcao_evolutivo() {
 
         populacao.predacao_sintese(&mapa, PREDADOS);
         if PERIODO_PREDACAO != 0 && geracao % PERIODO_PREDACAO == 0 {
-            populacao.predacao_sintese(&mapa, PREDADOS);
+            populacao.predacao_randomica(&mapa, PREDADOS);
         }
 
         populacao.mutacao(MUTACAO);
