@@ -11,7 +11,7 @@ extern int tam_cromossomo;
 /**
  * Armazena uma conjunto de solucoes,
  * onde cada solucao eh um individuo da populacao
- * 
+ *
  * Possui metodos para ser populacao do algoritmo evolutivo
  */
 typedef struct Populacao {
@@ -58,7 +58,7 @@ bool populacao_torneio(Populacao* populacao);
 /**
  * Aplica mutacao na populacao
  * Cada gene tem o valor do parametro mutacao de chance de sofrer mutacao
- * E garantido que pelo menos um gene de cada individuo sofrera mutacao
+ * Eh garantido que pelo menos um gene de cada individuo sofrera mutacao
  */
 void populacao_mutacao(Populacao* populacao, double mutacao);
 

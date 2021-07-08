@@ -11,13 +11,13 @@ extern const int M;  // Numero maximo de recursoes de jogo_possiveis()
 
 /**
  * jogada -> jogada'
- * Pega uma jogada e retorna onde ela seria naquela simtria
+ * Pega uma jogada e retorna onde ela seria naquela simetria
  */
 extern byte simetrias[8][9];
 
 /**
  * jogada <- jogada'
- * Pega uma jogada em um jogo que passou por simtria e 
+ * Pega uma jogada em um jogo que passou por simetria e
  * a tranforma em uma jogada antes de passar pela simtria
  */
 extern byte simetrias_reversa[8][9];
@@ -130,7 +130,7 @@ inline static int calc_min(byte* jogo) {
 }
 
 /**
- * Retorna qual a simtria usada para que o jogo tenha o menor valor possivel
+ * Retorna qual a simetria usada para que o jogo tenha o menor valor possivel
  */
 inline static int calc_sim(byte* jogo) {
     int i, j;
@@ -162,7 +162,7 @@ inline static int calc_val(byte* jogo, int sim) {
 //* ===== Jogo ===== *//
 
 /**
- * Retorna em jogos uma lista de todos os jogos possiveis de acontecer
+ * Retorna uma lista de todos os jogos possiveis de acontecer
  * Retorna em n quantas posicoes foram usadas
  */
 byte** jogos_possiveis(int* n);

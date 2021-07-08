@@ -7,7 +7,7 @@
 /**
  * Armazena dados do individuo
  * incluindo a solucao e outros dados pertinentes
- * 
+ *
  * Possui metodos para ser individuo do algoritmo evolutivo
  */
 typedef struct Individuo {
@@ -35,7 +35,7 @@ void individuo_apagar(Individuo** individuo);
 //* ===== Jogar ===== *//
 
 /**
- * Faz dois inviduos jogar atualizando o elo deles
+ * Faz dois inviduos jogar atualizando o fitness deles
  */
 int individuo_jogar(Individuo* a, Individuo* b);
 
@@ -50,7 +50,7 @@ Individuo* individuo_crossover(Individuo* pai, Individuo* mae);
 /**
  * Aplica mutacao no individuo
  * Cada gene tem o valor do parametro mutacao de chance de sofrer mutacao
- * E garantido que pelo menos um gene sofrera mutacao
+ * Eh garantido que pelo menos um gene sofrera mutacao
  */
 void individuo_mutacao(Individuo* individuo, double mutacao);
 
