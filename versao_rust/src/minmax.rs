@@ -9,17 +9,14 @@ pub fn minmax(jogo: &Jogo) -> u8 {
     /// * Empate: 0
     /// * Derrota: -1
     fn rec_minmax(jogo: &Jogo, maximizador: Vez) -> i8 {
-        match jogo.resultado() {
-            Vez::V => return 0,
-            Vez::X | Vez::O => {
-                if Vez::X == maximizador {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-            Vez::Z => (),
-        }
+        let resultado = jogo.resultado();
+        if resultado == maximizador {
+            return 1; // maximizador (Vez::X ou Vez::O)
+        } else if resultado == Vez::V {
+            return 0; // Vez::V
+        } else if resultado != Vez::Z {
+            return -1; // minimizador (Vez::X ou Vez::O)
+        } // Vez::Z
 
         if jogo.vez == maximizador {
             // Se for a minha vez
@@ -41,7 +38,7 @@ pub fn minmax(jogo: &Jogo) -> u8 {
                 }
             }
 
-            return if zero { 0 } else { 1 };
+            return if zero { 0 } else { -1 };
         } else {
             // Se for a vez do oponente
 
@@ -69,7 +66,7 @@ pub fn minmax(jogo: &Jogo) -> u8 {
     let mut jogada: u8 = 0;
     let mut melhor: i8 = -2;
     for i in 0..jogo.data.len() {
-        if jogo.data[i] == Vez::Z {
+        if jogo.data[i] != Vez::Z {
             continue;
         }
 

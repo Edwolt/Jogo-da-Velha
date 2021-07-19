@@ -62,8 +62,6 @@ fn opcao_mapa() {
 }
 
 fn opcao_minmax() {
-    // TODO Não está funcionando como deveria
-
     let mapa = Mapa::carregar("mapa.txt").expect("Falha ao carregar mapa");
     let jogos = Jogo::possibilidades();
     let mut solucao = Solucao::criar(&mapa);

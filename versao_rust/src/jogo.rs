@@ -223,10 +223,10 @@ impl Jogo {
         let mut simetria = 0;
 
         for (i, sim) in SIMETRIAS_REVERSA.iter().enumerate() {
-            let numero = sim.iter().fold(0, |acc, &idx| {
+            let numero = sim.iter().enumerate().fold(0, |acc, (j, &idx)| {
                 let idx = idx as usize;
                 let num = self.data[idx].num() as u32;
-                let res = num * POW3[i];
+                let res = num * POW3[j];
                 acc + res
             });
 
