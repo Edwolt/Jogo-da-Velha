@@ -48,6 +48,7 @@ impl Solucao {
     }
 
     /// Carrega a solução no arquivo `path`
+    #[allow(dead_code)]
     pub fn carregar(&self, _mapa: &Mapa, path: &str) -> Result<Solucao> {
         let conteudo = fs::read_to_string(path)?;
         let cromossomo: Vec<Option<u8>> = conteudo
@@ -114,8 +115,7 @@ impl Solucao {
 
     /// Cria um nova solução
     /// com um mistrura das características do pai e da mãe
-    pub fn crossover(mapa: &Mapa, pai: &Solucao, mae: &Solucao) -> Solucao {
-        let tam = mapa.tam_cromossomo;
+    pub fn crossover(pai: &Solucao, mae: &Solucao) -> Solucao {
         let mut random = rand::thread_rng();
 
         let cromossomo: Vec<Option<u8>> = pai

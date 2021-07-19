@@ -46,12 +46,12 @@ impl Populacao {
     /// Cria uma nova população usando o metódo elitismo
     ///
     /// Considera que o primeiro indivíduo é o melhor de todos
-    pub fn _elitismo(&mut self, mapa: &Mapa) {
+    pub fn _elitismo(&mut self) {
         let melhor = &self.pop[0];
         self.pop = self
             .pop
             .iter()
-            .map(|i| Individuo::crossover(mapa, melhor, i))
+            .map(|i| Individuo::crossover(melhor, i))
             .collect();
     }
 
@@ -59,7 +59,7 @@ impl Populacao {
     /// usando o metódo torneio de dois baseado no fitness dos indivíduos
     ///
     /// Considera que o primeiro indivíduo é o melhor de todos
-    pub fn _torneio(&mut self, mapa: &Mapa) {
+    pub fn _torneio(&mut self) {
         let mut random = rand::thread_rng();
         self.pop = self
             .pop
@@ -84,7 +84,7 @@ impl Populacao {
                     }
                 };
 
-                Individuo::crossover(mapa, pai, mae)
+                Individuo::crossover(pai, mae)
             })
             .collect();
     }

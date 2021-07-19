@@ -106,7 +106,7 @@ fn opcao_evolutivo() {
             break;
         }
 
-        populacao._torneio(&mapa);
+        populacao._torneio();
         populacao.fitness(&mapa);
         if PERIODO_INFORMACAO != 0 && geracao % PERIODO_INFORMACAO == 0 {
             println!(

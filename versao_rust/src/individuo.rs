@@ -15,6 +15,7 @@ pub struct Individuo {
 }
 
 impl Individuo {
+    #[allow(dead_code)]
     pub fn criar(mapa: &Mapa) -> Individuo {
         Individuo {
             solucao: Solucao::criar(mapa),
@@ -62,9 +63,9 @@ impl Individuo {
 
     /// Cria um novo indivíduo
     /// com um mistrura das características do pai e da mae
-    pub fn crossover(mapa: &Mapa, pai: &Individuo, mae: &Individuo) -> Individuo {
+    pub fn crossover(pai: &Individuo, mae: &Individuo) -> Individuo {
         Individuo {
-            solucao: Solucao::crossover(mapa, &pai.solucao, &mae.solucao),
+            solucao: Solucao::crossover(&pai.solucao, &mae.solucao),
             fitness: 0,
         }
     }

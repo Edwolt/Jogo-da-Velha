@@ -85,6 +85,7 @@ pub enum Vez {
 
 impl Vez {
     /// Retorna a `Vez` correpondente ao número
+    #[allow(dead_code)]
     pub const fn from_num(val: u8) -> Vez {
         match val {
             0 => Vez::Z,
@@ -120,6 +121,7 @@ impl Vez {
     //===== Resultado =====//
 
     /// Retorna se alguém venceu o jogo
+    #[allow(dead_code)]
     pub const fn venceu(self) -> bool {
         match self {
             Vez::X | Vez::O => true,
@@ -128,6 +130,7 @@ impl Vez {
     }
 
     /// Retorna se o jogo deu velha
+    #[allow(dead_code)]
     pub const fn velha(self) -> bool {
         matches!(self, Vez::V)
     }
@@ -156,6 +159,7 @@ impl Jogo {
     }
 
     /// Cria um novo jogo usando o array passado
+    #[allow(dead_code)]
     pub const fn criar_com(jogo: [Vez; 9]) -> Jogo {
         /// Calcula qual o próximo jogador a jogar
         const fn proximo_jogador(jogo: [Vez; 9]) -> Vez {
@@ -240,6 +244,7 @@ impl Jogo {
     }
 
     /// Retorna o valor so jogo na simétria
+    #[allow(dead_code)]
     pub fn valor(&self, simetria: usize) -> u32 {
         SIMETRIAS_REVERSA[simetria]
             .iter()
