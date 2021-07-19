@@ -50,9 +50,9 @@ impl Individuo {
             }
 
             match jogo.resultado() {
-                Vez::X => 1i32,
-                Vez::O => -1i32,
-                _ => 0i32,
+                Vez::X => 1,
+                Vez::O => -1,
+                _ => 0,
             }
         }
 

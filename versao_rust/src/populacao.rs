@@ -40,13 +40,13 @@ impl Populacao {
             self.pop[i] = individuo;
         }
 
-        self.pop.sort_unstable_by_key(|ind| ind.fitness);
+        self.pop.sort_unstable_by(|a, b| b.fitness.cmp(&a.fitness));
     }
 
     /// Cria uma nova população usando o metódo elitismo
     ///
     /// Considera que o primeiro indivíduo é o melhor de todos
-    pub fn elitismo(&mut self, mapa: &Mapa, populacao: Populacao) {
+    pub fn _elitismo(&mut self, mapa: &Mapa) {
         let melhor = &self.pop[0];
         self.pop = self
             .pop
@@ -59,11 +59,11 @@ impl Populacao {
     /// usando o metódo torneio de dois baseado no fitness dos indivíduos
     ///
     /// Considera que o primeiro indivíduo é o melhor de todos
-    pub fn torneio(&mut self, mapa: &Mapa) {
-        let tam = mapa.tam_cromossomo;
-
+    pub fn _torneio(&mut self, mapa: &Mapa) {
         let mut random = rand::thread_rng();
-        self.pop = (0..tam)
+        self.pop = self
+            .pop
+            .iter()
             .map(|_| {
                 let pai = {
                     let a = self.pop.choose(&mut random).unwrap();
@@ -94,14 +94,14 @@ impl Populacao {
     /// Cada gene tem o valor do parâmetro mutação de chance de sofrer mutação
     ///
     /// É garantido que pelo menos um gene de cada indivíduo sofrerá mutação
-    pub fn mutacao(&mut self, mutacao: f64) {
+    pub fn _mutacao(&mut self, mutacao: f64) {
         self.pop.iter_mut().for_each(|i| i.mutacao(mutacao));
     }
 
     /// Gera uma nova por predação por síntese
     /// (indivíduo com os genes mais comuns na população)
     /// e troca pelo pior de todos exceto os `n` pior que é da predação radômica
-    pub fn predacao_sintese(&mut self, mapa: &Mapa, n: usize) {
+    pub fn _predacao_sintese(&mut self, mapa: &Mapa, n: usize) {
         let tam = mapa.tam_cromossomo;
 
         let cromossomo = (0..tam)
@@ -132,7 +132,7 @@ impl Populacao {
     }
 
     /// Gera n novas soluções aleatórias trocando as piores soluções
-    pub fn predacao_randomica(&mut self, mapa: &Mapa, n: usize) {
+    pub fn _predacao_randomica(&mut self, mapa: &Mapa, n: usize) {
         // self.pop.iter_mut().rev().take(n).for_each(|i| {
         //     let mut ind = Individuo::random(tam);
         //     ind.fitness = self.individuo_fitness(mapa, &mut ind);

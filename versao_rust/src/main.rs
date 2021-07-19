@@ -9,7 +9,7 @@ use std::io;
 use std::path::Path;
 use std::process::Command;
 
-use device_query::{DeviceQuery, DeviceState};
+use device_query::{DeviceQuery, DeviceState, Keycode};
 
 use crate::jogo::Jogo;
 use crate::mapa::Mapa;
@@ -86,18 +86,27 @@ fn opcao_evolutivo() {
     const MUTACAO: f64 = 0.002;
 
     let device = DeviceState::new();
-    let sair = || !device.get_keys().is_empty();
+    // Não funciona exatamente igual ao kbhit
+    let sair = || {
+        let keys = device.get_keys();
+        if keys.is_empty() {
+            false
+        } else {
+            keys.iter().any(|k| k == &Keycode::Q)
+        }
+    };
     let mapa = Mapa::carregar("mapa.txt").expect("Falha ao carregar mapa");
 
     let mut populacao = Populacao::criar(&mapa, N);
     populacao.fitness(&mapa);
 
-    for geracao in 0u128.. {
+    for geracao in 0u128..1000u128 {
         if sair() {
+            println!("Sair!");
             break;
         }
 
-        populacao.torneio(&mapa);
+        populacao._torneio(&mapa);
         populacao.fitness(&mapa);
         if PERIODO_INFORMACAO != 0 && geracao % PERIODO_INFORMACAO == 0 {
             println!(
@@ -105,15 +114,15 @@ fn opcao_evolutivo() {
                 geracao,
                 populacao.pop.first().unwrap().fitness,
                 populacao.pop.last().unwrap().fitness
-            )
+            );
         }
 
-        populacao.predacao_sintese(&mapa, PREDADOS);
+        populacao._predacao_sintese(&mapa, PREDADOS);
         if PERIODO_PREDACAO != 0 && geracao % PERIODO_PREDACAO == 0 {
-            populacao.predacao_randomica(&mapa, PREDADOS);
+            populacao._predacao_randomica(&mapa, PREDADOS);
         }
 
-        populacao.mutacao(MUTACAO);
+        populacao._mutacao(MUTACAO);
     }
 
     populacao.fitness(&mapa);
@@ -123,5 +132,5 @@ fn opcao_evolutivo() {
     melhor
         .salvar("evolutivo.txt")
         .expect("Falha ao salvar solução");
-    println!("Solução salva em minmax.txt")
+    println!("Solução salva em evolutivo.txt")
 }
