@@ -69,7 +69,7 @@ int main() {
     printf("\n%d geracoes processadas com %d de fitness\n", geracao, populacao->pop[0]->fitness);
 
     solucao_salvar(populacao->pop[0]->sol, "evolutivo.txt");
-    printf("Melhor solucao salvo em elitismo.txt\n");
+    printf("Melhor solucao salvo em evolutivo.txt\n");
     populacao_apagar(&populacao);
     return EXIT_SUCCESS;
 

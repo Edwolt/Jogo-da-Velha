@@ -4,11 +4,11 @@ CC        := gcc
 ### Flags de Compilacao
 LIBS      := -lm  # Bibliotecas usadas
 # Flags para compilar
-CFLAGS    := $(LIBS) 
+CFLAGS    := $(LIBS)
 # Flags para compilar um programa otimizado
 FFLAGS    := $(LIBS) -O3 -march=native
 # Flags para compilar para debug
-DFLAGS    := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address 
+DFLAGS    := $(LIBS) -g -Wall -Wextra -pedantic -Werror=implicit-function-declaration -fsanitize=address
 # Flags para compilar para o gprof
 GFLAGS    := $(LIBS) -pg $(FFLAGS)
 # Flags que serao usadas para compilar
@@ -80,7 +80,7 @@ evolutivo.out: subdirs $(MODULOS) $(EVOLUTIVO)
 
 ### Compilando ...
 $(BIN)/modulos/%.o: modulos/%.c
-	$(CC) -c -o $@ $< $(FLAGS) 
+	$(CC) -c -o $@ $< $(FLAGS)
 
 $(BIN)/mapa/%.o: mapa/%.c
 	$(CC) -c -o $@ $< $(FLAGS) -iquote modulos
