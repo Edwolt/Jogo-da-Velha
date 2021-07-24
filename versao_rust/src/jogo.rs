@@ -211,7 +211,7 @@ impl Jogo {
         SIMETRIAS_REVERSA.iter().fold(u32::MAX, |minimo, sim| {
             let numero = sim.iter().enumerate().fold(0, |acc, (i, &idx)| {
                 let idx = idx as usize;
-                let num = (self.data[idx as usize].num() as u32) * POW3[i];
+                let num = self.data[idx as usize].num() as u32;
                 let res = num * POW3[i];
                 acc + res
             });
