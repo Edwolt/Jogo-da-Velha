@@ -198,6 +198,7 @@ impl Jogo {
     }
 
     /// Retorna o valor do jogo
+    #[inline]
     pub fn numero(&self) -> u32 {
         self.data.iter().enumerate().fold(0, |acc, (i, jogada)| {
             let num = jogada.num() as u32;
@@ -207,6 +208,7 @@ impl Jogo {
     }
 
     /// Retorna o menor valor entre os jogos e seus simétricos
+    #[inline]
     pub fn minimo(&self) -> u32 {
         SIMETRIAS_REVERSA.iter().fold(u32::MAX, |minimo, sim| {
             let numero = sim.iter().enumerate().fold(0, |acc, (i, &idx)| {
@@ -222,6 +224,7 @@ impl Jogo {
 
     /// Retorna qual a simétria usada
     /// para que o jogo tenha o menor valor possível
+    #[inline(always)]
     pub fn simetria(&self) -> usize {
         let mut minimo = u32::MAX;
         let mut simetria = 0;
@@ -245,6 +248,7 @@ impl Jogo {
 
     /// Retorna o valor so jogo na simétria
     #[allow(dead_code)]
+    #[inline]
     pub fn valor(&self, simetria: usize) -> u32 {
         SIMETRIAS_REVERSA[simetria]
             .iter()

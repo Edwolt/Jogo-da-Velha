@@ -66,6 +66,7 @@ impl Solucao {
 
     /// Corrige jogada dentro da solução se for necessário
     /// e retorna a nova jogada
+    #[inline]
     pub fn corrige_jogada(&mut self, mapa: &Mapa, jogo: &Jogo, jogada: Option<u8>) -> Option<u8> {
         if jogada.is_none() || jogo.data[jogada.unwrap() as usize] != Vez::Z {
             let mut random = rand::thread_rng();

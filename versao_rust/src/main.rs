@@ -6,6 +6,7 @@ mod populacao;
 mod solucao;
 
 use std::io;
+use std::ops::Range;
 use std::path::Path;
 use std::process::Command;
 
@@ -38,7 +39,7 @@ fn main() {
             1 => opcao_jogar(),
             2 => opcao_mapa(),
             3 => opcao_minmax(),
-            4 => opcao_evolutivo(),
+            4 => opcao_evolutivo(0..u128::MAX),
             _ => break,
         }
     }
@@ -76,7 +77,7 @@ fn opcao_minmax() {
     println!("Solução salva em minmax.txt");
 }
 
-fn opcao_evolutivo() {
+fn opcao_evolutivo(range: Range<u128>) {
     // TODO Não está funcionando como deveria
 
     const N: usize = 200;
@@ -100,7 +101,7 @@ fn opcao_evolutivo() {
     let mut populacao = Populacao::criar(&mapa, N);
     populacao.fitness(&mapa);
 
-    for geracao in 0u128..1000u128 {
+    for geracao in range {
         if sair() {
             println!("Sair!");
             break;
